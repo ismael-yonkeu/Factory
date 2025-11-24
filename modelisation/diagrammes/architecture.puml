@@ -1,0 +1,148 @@
+@startuml Diagramme d'Architecture
+title Diagramme d'Architecture - Plateforme de Digitalisation d'Usine
+
+!define RECTANGLE class
+
+package "Frontend" {
+    [Application Admin\nReactJS] as AdminApp
+    [Application Web\nReactJS] as WebApp
+    [Application Mobile\nFlutter] as MobileApp
+}
+
+package "API Gateway / Load Balancer" {
+    [Nginx/API Gateway] as Gateway
+}
+
+package "Backend Services" {
+    package "API NestJS" {
+        [Auth Module\n(AD + JWT)] as AuthModule
+        [User Management] as UserModule
+        [Checklist Module] as ChecklistModule
+        [Submission Module] as SubmissionModule
+        [Approval Module] as ApprovalModule
+        [Dashboard Module] as DashboardModule
+        [KPI Module] as KPIModule
+        [Notification Module] as NotificationModule
+        [File Upload Module] as FileModule
+    }
+    
+    package "Services" {
+        [LDAP Service\n(Active Directory)] as LDAPService
+        [JWT Service] as JWTService
+        [Email Service] as EmailService
+        [SMS Service] as SMSService
+        [File Storage Service] as FileStorageService
+        [Notification Service] as NotificationService
+        [Report Generator Service] as ReportService
+    }
+}
+
+package "Data Layer" {
+    database "PostgreSQL\n(Primary DB)" as PostgreSQL {
+        [Users Table]
+        [Checklists Table]
+        [Submissions Table]
+        [Approvals Table]
+        [KPIs Table]
+    }
+    
+    database "Redis\n(Cache & Sessions)" as Redis {
+        [Session Store]
+        [Token Blacklist]
+        [Cache]
+    }
+    
+    object "Object Storage\n(S3/MinIO)" as ObjectStorage {
+        [Files]
+        [Images]
+        [Documents]
+    }
+}
+
+package "External Services" {
+    [Active Directory\n(LDAP)] as AD
+    [Email Server\n(SMTP)] as EmailServer
+    [SMS Gateway] as SMSGateway
+}
+
+' Frontend connections
+AdminApp --> Gateway : HTTPS
+WebApp --> Gateway : HTTPS
+MobileApp --> Gateway : HTTPS
+
+' Gateway to API
+Gateway --> AuthModule : HTTP/REST
+Gateway --> UserModule : HTTP/REST
+Gateway --> ChecklistModule : HTTP/REST
+Gateway --> SubmissionModule : HTTP/REST
+Gateway --> ApprovalModule : HTTP/REST
+Gateway --> DashboardModule : HTTP/REST
+Gateway --> KPIModule : HTTP/REST
+Gateway --> NotificationModule : HTTP/REST
+Gateway --> FileModule : HTTP/REST
+
+' Module to Service connections
+AuthModule --> LDAPService : LDAP Protocol
+AuthModule --> JWTService : Internal
+UserModule --> EmailService : Internal
+UserModule --> SMSService : Internal
+ChecklistModule --> NotificationService : Internal
+SubmissionModule --> NotificationService : Internal
+ApprovalModule --> NotificationService : Internal
+FileModule --> FileStorageService : Internal
+DashboardModule --> ReportService : Internal
+
+' Service to External connections
+LDAPService --> AD : LDAP/389
+EmailService --> EmailServer : SMTP
+SMSService --> SMSGateway : HTTP/API
+
+' Module to Data Layer connections
+AuthModule --> PostgreSQL : SQL
+AuthModule --> Redis : Redis Protocol
+UserModule --> PostgreSQL : SQL
+ChecklistModule --> PostgreSQL : SQL
+SubmissionModule --> PostgreSQL : SQL
+ApprovalModule --> PostgreSQL : SQL
+DashboardModule --> PostgreSQL : SQL
+KPIModule --> PostgreSQL : SQL
+NotificationModule --> PostgreSQL : SQL
+FileModule --> PostgreSQL : SQL
+
+FileModule --> ObjectStorage : S3 API
+FileStorageService --> ObjectStorage : S3 API
+
+NotificationModule --> Redis : Redis Protocol
+DashboardModule --> Redis : Redis Protocol
+
+note right of AdminApp
+  - Dashboard
+  - Gestion checklists
+  - Attribution
+  - Approbation
+  - KPI
+  - Rapports
+end note
+
+note right of WebApp
+  - Collecte données
+  - Checklists assignées
+  - Soumission
+  - Photos/Commentaires
+  - Signature électronique
+end note
+
+note right of MobileApp
+  - Mêmes fonctionnalités
+  que WebApp
+  - Mode offline
+  - Synchronisation
+end note
+
+note right of AuthModule
+  Authentification:
+  - AD pour Admin
+  - JWT pour Web/Mobile
+end note
+
+@enduml

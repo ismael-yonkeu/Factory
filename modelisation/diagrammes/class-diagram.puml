@@ -1,0 +1,309 @@
+@startuml Diagramme de Classes
+title Diagramme de Classes - Modèle de Données
+
+package "Authentification" {
+    class User {
+        +id: UUID
+        +email: string
+        +phone: string
+        +passwordHash: string
+        +role: UserRole
+        +isActive: boolean
+        +adUsername: string?
+        +lastLogin: DateTime?
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        --
+        +authenticate(password: string): boolean
+        +hasPermission(permission: string): boolean
+    }
+    
+    class UserRole {
+        <<enumeration>>
+        ADMIN
+        SUPERVISOR
+        OPERATOR
+    }
+    
+    class RefreshToken {
+        +id: UUID
+        +userId: UUID
+        +token: string
+        +expiresAt: DateTime
+        +createdAt: DateTime
+    }
+    
+    class PasswordResetToken {
+        +id: UUID
+        +userId: UUID
+        +token: string
+        +expiresAt: DateTime
+        +used: boolean
+        +createdAt: DateTime
+    }
+    
+    User "1" *-- "0..*" RefreshToken
+    User "1" *-- "0..*" PasswordResetToken
+}
+
+package "Checklists" {
+    class Checklist {
+        +id: UUID
+        +name: string
+        +description: string
+        +category: string
+        +isActive: boolean
+        +createdBy: UUID
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        --
+        +activate(): void
+        +deactivate(): void
+    }
+    
+    class ChecklistItem {
+        +id: UUID
+        +checklistId: UUID
+        +order: number
+        +label: string
+        +type: ItemType
+        +isRequired: boolean
+        +options: JSON?
+        +validationRules: JSON?
+        +createdAt: DateTime
+        --
+        +validate(value: any): boolean
+    }
+    
+    class ItemType {
+        <<enumeration>>
+        TEXT
+        NUMBER
+        BOOLEAN
+        SELECT
+        MULTI_SELECT
+        DATE
+        TIME
+        DATETIME
+        FILE
+        SIGNATURE
+        LOCATION
+    }
+    
+    class ChecklistAssignment {
+        +id: UUID
+        +checklistId: UUID
+        +assignedTo: UUID
+        +assignedBy: UUID
+        +dueDate: DateTime?
+        +status: AssignmentStatus
+        +priority: Priority
+        +notes: string?
+        +assignedAt: DateTime
+        +completedAt: DateTime?
+        --
+        +markAsCompleted(): void
+        +cancel(): void
+    }
+    
+    class AssignmentStatus {
+        <<enumeration>>
+        PENDING
+        IN_PROGRESS
+        COMPLETED
+        CANCELLED
+        OVERDUE
+    }
+    
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+        URGENT
+    }
+    
+    Checklist "1" *-- "1..*" ChecklistItem
+    Checklist "1" *-- "0..*" ChecklistAssignment
+    ChecklistItem --> ItemType
+    ChecklistAssignment --> AssignmentStatus
+    ChecklistAssignment --> Priority
+}
+
+package "Collecte de Données" {
+    class ChecklistSubmission {
+        +id: UUID
+        +checklistId: UUID
+        +assignmentId: UUID
+        +submittedBy: UUID
+        +status: SubmissionStatus
+        +submittedAt: DateTime
+        +approvedAt: DateTime?
+        +approvedBy: UUID?
+        +rejectedAt: DateTime?
+        +rejectedBy: UUID?
+        +rejectionReason: string?
+        +signature: string?
+        +location: JSON?
+        +metadata: JSON
+        --
+        +submit(): void
+        +approve(approvedBy: UUID): void
+        +reject(rejectedBy: UUID, reason: string): void
+    }
+    
+    class SubmissionStatus {
+        <<enumeration>>
+        DRAFT
+        SUBMITTED
+        APPROVED
+        REJECTED
+    }
+    
+    class ChecklistAnswer {
+        +id: UUID
+        +submissionId: UUID
+        +itemId: UUID
+        +value: JSON
+        +files: JSON?
+        +comments: string?
+        +answeredAt: DateTime
+    }
+    
+    class FileAttachment {
+        +id: UUID
+        +answerId: UUID
+        +fileName: string
+        +filePath: string
+        +fileSize: number
+        +mimeType: string
+        +uploadedAt: DateTime
+    }
+    
+    ChecklistSubmission "1" *-- "1..*" ChecklistAnswer
+    ChecklistSubmission --> SubmissionStatus
+    ChecklistAnswer "1" *-- "0..*" FileAttachment
+}
+
+package "Approbation" {
+    class ApprovalWorkflow {
+        +id: UUID
+        +checklistId: UUID
+        +name: string
+        +steps: JSON
+        +isActive: boolean
+        +createdAt: DateTime
+    }
+    
+    class ApprovalStep {
+        +id: UUID
+        +workflowId: UUID
+        +order: number
+        +approverRole: UserRole
+        +isRequired: boolean
+        +createdAt: DateTime
+    }
+    
+    class Approval {
+        +id: UUID
+        +submissionId: UUID
+        +stepId: UUID
+        +approverId: UUID
+        +status: ApprovalStatus
+        +comments: string?
+        +approvedAt: DateTime?
+        --
+        +approve(comments?: string): void
+        +reject(reason: string): void
+    }
+    
+    class ApprovalStatus {
+        <<enumeration>>
+        PENDING
+        APPROVED
+        REJECTED
+    }
+    
+    ApprovalWorkflow "1" *-- "1..*" ApprovalStep
+    ChecklistSubmission "1" *-- "0..*" Approval
+    Approval --> ApprovalStatus
+    Approval --> ApprovalStep
+}
+
+package "Dashboard et KPI" {
+    class Dashboard {
+        +id: UUID
+        +name: string
+        +userId: UUID
+        +widgets: JSON
+        +layout: JSON
+        +createdAt: DateTime
+        +updatedAt: DateTime
+    }
+    
+    class KPI {
+        +id: UUID
+        +name: string
+        +description: string
+        +formula: string
+        +category: string
+        +unit: string?
+        +target: number?
+        +isActive: boolean
+        +createdAt: DateTime
+        --
+        +calculate(): number
+    }
+    
+    class KPIValue {
+        +id: UUID
+        +kpiId: UUID
+        +value: number
+        +period: string
+        +calculatedAt: DateTime
+    }
+    
+    KPI "1" *-- "0..*" KPIValue
+}
+
+package "Notifications" {
+    class Notification {
+        +id: UUID
+        +userId: UUID
+        +type: NotificationType
+        +title: string
+        +message: string
+        +isRead: boolean
+        +relatedEntityType: string?
+        +relatedEntityId: UUID?
+        +createdAt: DateTime
+        +readAt: DateTime?
+        --
+        +markAsRead(): void
+    }
+    
+    class NotificationType {
+        <<enumeration>>
+        ASSIGNMENT
+        APPROVAL_REQUEST
+        APPROVAL_RESULT
+        REMINDER
+        SYSTEM
+    }
+    
+    Notification --> NotificationType
+}
+
+' Relations entre packages
+User "1" *-- "0..*" Checklist : creates
+User "1" *-- "0..*" ChecklistAssignment : assigns
+User "1" *-- "0..*" ChecklistAssignment : assignedTo
+User "1" *-- "0..*" ChecklistSubmission : submits
+User "1" *-- "0..*" Approval : approves
+User "1" *-- "0..*" Dashboard : owns
+User "1" *-- "0..*" Notification : receives
+
+ChecklistAssignment "1" *-- "0..1" ChecklistSubmission : generates
+Checklist "1" *-- "0..1" ApprovalWorkflow : has
+
+@enduml

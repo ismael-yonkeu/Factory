@@ -1,0 +1,270 @@
+@startuml Diagramme de Séquence - Authentification JWT (Web/Mobile)
+title Diagramme de Séquence - Authentification JWT (Partie Web et Mobile)
+
+actor "Utilisateur Terrain" as User
+participant "Application Web\n(ReactJS)" as AppWeb
+participant "Application Mobile\n(Flutter)" as AppMobile
+participant "API NestJS" as API
+participant "Service Auth JWT" as AuthJWT
+database "Base de données\n(PostgreSQL)" as DB
+
+== Inscription ==
+User -> AppWeb: Saisit informations\n(email/téléphone, password)
+activate AppWeb
+
+AppWeb -> API: POST /auth/register\n{email, phone, password}
+activate API
+
+API -> AuthJWT: register(userData)
+activate AuthJWT
+
+AuthJWT -> DB: Vérifie email/téléphone\nexiste déjà
+activate DB
+
+alt Email/téléphone déjà utilisé
+    DB --> AuthJWT: User existe
+    deactivate DB
+    AuthJWT --> API: Error: User already exists
+    deactivate AuthJWT
+    API --> AppWeb: 409 Conflict\n{message: "Email/téléphone déjà utilisé"}
+    deactivate API
+    AppWeb --> User: Affiche message d'erreur
+else Email/téléphone disponible
+    DB --> AuthJWT: User n'existe pas
+    deactivate DB
+    
+    AuthJWT -> AuthJWT: Hash password\n(bcrypt)
+    AuthJWT -> DB: Crée utilisateur\n{email, phone, hashedPassword, role: "OPERATOR"}
+    activate DB
+    DB --> AuthJWT: User créé\n{id, email, phone, createdAt}
+    deactivate DB
+    
+    AuthJWT -> AuthJWT: Génère JWT Token\n{userId, email, role}
+    AuthJWT --> API: {accessToken, refreshToken, user}
+    deactivate AuthJWT
+    
+    API --> AppWeb: 201 Created\n{accessToken, refreshToken, user}
+    deactivate API
+    
+    AppWeb -> AppWeb: Stocke token\n(localStorage/AsyncStorage)
+    AppWeb --> User: Redirection vers application
+end
+
+deactivate AppWeb
+
+== Connexion ==
+User -> AppWeb: Saisit identifiants\n(email/téléphone, password)
+activate AppWeb
+
+AppWeb -> API: POST /auth/login\n{emailOrPhone, password}
+activate API
+
+API -> AuthJWT: login(emailOrPhone, password)
+activate AuthJWT
+
+AuthJWT -> DB: Recherche user par\nemail ou téléphone
+activate DB
+
+alt Utilisateur trouvé
+    DB --> AuthJWT: User trouvé\n{id, email, phone, hashedPassword, role}
+    deactivate DB
+    
+    AuthJWT -> AuthJWT: Vérifie password\n(bcrypt.compare)
+    
+    alt Mot de passe correct
+        AuthJWT -> AuthJWT: Génère JWT Token\n{userId, email, phone, role}
+        AuthJWT -> DB: Met à jour lastLogin
+        activate DB
+        DB --> AuthJWT: Updated
+        deactivate DB
+        
+        AuthJWT --> API: {accessToken, refreshToken, user}
+        deactivate AuthJWT
+        
+        API --> AppWeb: 200 OK\n{accessToken, refreshToken, user}
+        deactivate API
+        
+        AppWeb -> AppWeb: Stocke token\n(localStorage/AsyncStorage)
+        AppWeb --> User: Redirection vers application
+    else Mot de passe incorrect
+        AuthJWT --> API: Error: Invalid credentials
+        deactivate AuthJWT
+        API --> AppWeb: 401 Unauthorized\n{message: "Identifiants invalides"}
+        deactivate API
+        AppWeb --> User: Affiche message d'erreur
+    end
+else Utilisateur non trouvé
+    DB --> AuthJWT: User not found
+    deactivate DB
+    AuthJWT --> API: Error: Invalid credentials
+    deactivate AuthJWT
+    API --> AppWeb: 401 Unauthorized\n{message: "Identifiants invalides"}
+    deactivate API
+    AppWeb --> User: Affiche message d'erreur
+end
+
+deactivate AppWeb
+
+== Vérification de session ==
+User -> AppWeb: Accès à une fonctionnalité
+activate AppWeb
+
+AppWeb -> AppWeb: Vérifie token présent
+alt Token valide
+    AppWeb -> API: GET /auth/me\nHeader: Authorization Bearer {token}
+    activate API
+    
+    API -> AuthJWT: validateToken(token)
+    activate AuthJWT
+    
+    AuthJWT -> AuthJWT: Vérifie signature JWT
+    AuthJWT -> AuthJWT: Vérifie expiration
+    
+    alt Token valide
+        AuthJWT -> DB: Récupère user\npar userId du token
+        activate DB
+        DB --> AuthJWT: User info\n{id, email, phone, role, isActive}
+        deactivate DB
+        
+        alt User actif
+            AuthJWT --> API: Token valide + User info
+            deactivate AuthJWT
+            API --> AppWeb: 200 OK\n{user, roles, permissions}
+            deactivate API
+            
+            AppWeb --> User: Affiche contenu
+        else User désactivé
+            AuthJWT --> API: Error: User inactive
+            deactivate AuthJWT
+            API --> AppWeb: 403 Forbidden\n{message: "Compte désactivé"}
+            deactivate API
+            AppWeb -> AppWeb: Déconnexion forcée
+            AppWeb --> User: Redirection vers login
+        end
+    else Token expiré
+        AuthJWT --> API: Error: Token expired
+        deactivate AuthJWT
+        API --> AppWeb: 401 Unauthorized
+        deactivate API
+        
+        AppWeb -> API: POST /auth/refresh\n{refreshToken}
+        activate API
+        
+        API -> AuthJWT: refreshToken(refreshToken)
+        activate AuthJWT
+        
+        AuthJWT -> AuthJWT: Vérifie refreshToken
+        AuthJWT -> DB: Vérifie refreshToken valide
+        activate DB
+        DB --> AuthJWT: RefreshToken valide
+        deactivate DB
+        
+        AuthJWT -> AuthJWT: Génère nouveau accessToken
+        AuthJWT --> API: {newAccessToken, refreshToken}
+        deactivate AuthJWT
+        
+        API --> AppWeb: 200 OK\n{accessToken, refreshToken}
+        deactivate API
+        
+        AppWeb -> AppWeb: Met à jour token
+        AppWeb --> User: Continue navigation
+    end
+else Token absent
+    AppWeb --> User: Redirection vers login
+end
+
+deactivate AppWeb
+
+== Réinitialisation mot de passe ==
+User -> AppWeb: Clic sur "Mot de passe oublié"
+activate AppWeb
+
+AppWeb -> API: POST /auth/forgot-password\n{emailOrPhone}
+activate API
+
+API -> AuthJWT: requestPasswordReset(emailOrPhone)
+activate AuthJWT
+
+AuthJWT -> DB: Recherche user
+activate DB
+DB --> AuthJWT: User trouvé
+deactivate DB
+
+AuthJWT -> AuthJWT: Génère token de reset\n(expire dans 1h)
+AuthJWT -> DB: Stocke resetToken
+activate DB
+DB --> AuthJWT: Token sauvegardé
+deactivate DB
+
+AuthJWT -> AuthJWT: Envoie email/SMS\navec lien de reset
+AuthJWT --> API: Success
+deactivate AuthJWT
+
+API --> AppWeb: 200 OK\n{message: "Email/SMS envoyé"}
+deactivate API
+
+AppWeb --> User: Message de confirmation
+
+User -> AppWeb: Clic sur lien reset\n(dans email/SMS)
+activate AppWeb
+
+AppWeb -> API: POST /auth/reset-password\n{token, newPassword}
+activate API
+
+API -> AuthJWT: resetPassword(token, newPassword)
+activate AuthJWT
+
+AuthJWT -> DB: Vérifie resetToken valide
+activate DB
+DB --> AuthJWT: Token valide
+deactivate DB
+
+AuthJWT -> AuthJWT: Hash nouveau password
+AuthJWT -> DB: Met à jour password\nSupprime resetToken
+activate DB
+DB --> AuthJWT: Updated
+deactivate DB
+
+AuthJWT --> API: Success
+deactivate AuthJWT
+
+API --> AppWeb: 200 OK\n{message: "Mot de passe modifié"}
+deactivate API
+
+AppWeb --> User: Redirection vers login
+
+deactivate AppWeb
+
+== Déconnexion ==
+User -> AppWeb: Clic sur "Déconnexion"
+activate AppWeb
+
+AppWeb -> API: POST /auth/logout\nHeader: Authorization Bearer {token}
+activate API
+
+API -> AuthJWT: logout(token)
+activate AuthJWT
+
+AuthJWT -> DB: Invalide refreshToken\n(optionnel: blacklist token)
+activate DB
+DB --> AuthJWT: Token invalidé
+deactivate DB
+
+AuthJWT --> API: Success
+deactivate AuthJWT
+
+API --> AppWeb: 200 OK
+deactivate API
+
+AppWeb -> AppWeb: Supprime token\nlocalStorage/AsyncStorage
+AppWeb --> User: Redirection vers login
+
+deactivate AppWeb
+
+note right of AppMobile
+  L'application mobile (Flutter)
+  suit le même flux que
+  l'application web
+end note
+
+@enduml

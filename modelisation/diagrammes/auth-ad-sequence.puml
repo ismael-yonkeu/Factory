@@ -1,0 +1,112 @@
+@startuml Diagramme de Séquence - Authentification AD (Admin)
+title Diagramme de Séquence - Authentification Active Directory (Partie Admin)
+
+actor "Administrateur" as Admin
+participant "Application Admin\n(ReactJS)" as AppAdmin
+participant "API NestJS" as API
+participant "Service Auth AD" as AuthAD
+participant "Active Directory\n(LDAP)" as AD
+
+== Connexion ==
+Admin -> AppAdmin: Saisit identifiants AD\n(username, password)
+activate AppAdmin
+
+AppAdmin -> API: POST /auth/ad/login\n{username, password}
+activate API
+
+API -> AuthAD: authenticate(username, password)
+activate AuthAD
+
+AuthAD -> AD: LDAP Bind Request\n(username, password)
+activate AD
+
+alt Authentification réussie
+    AD --> AuthAD: LDAP Bind Success\n+ User Info (DN, groups, email)
+    AuthAD -> AuthAD: Génère JWT Token\navec claims AD (groups, roles)
+    AuthAD --> API: {token, user, roles}
+    deactivate AD
+    
+    API -> API: Stocke session\n(optionnel: Redis)
+    API --> AppAdmin: 200 OK\n{accessToken, refreshToken, user}
+    deactivate AuthAD
+    
+    AppAdmin -> AppAdmin: Stocke token\n(localStorage/sessionStorage)
+    AppAdmin --> Admin: Redirection vers dashboard
+else Authentification échouée
+    AD --> AuthAD: LDAP Bind Failed\n(Invalid credentials)
+    deactivate AD
+    AuthAD --> API: Error: Invalid credentials
+    deactivate AuthAD
+    API --> AppAdmin: 401 Unauthorized\n{message: "Identifiants invalides"}
+    deactivate API
+    AppAdmin --> Admin: Affiche message d'erreur
+end
+
+deactivate AppAdmin
+
+== Vérification de session ==
+Admin -> AppAdmin: Accès à une page protégée
+activate AppAdmin
+
+AppAdmin -> AppAdmin: Vérifie token présent
+alt Token valide
+    AppAdmin -> API: GET /auth/me\nHeader: Authorization Bearer {token}
+    activate API
+    
+    API -> API: Vérifie JWT token
+    API -> AuthAD: validateToken(token)
+    activate AuthAD
+    
+    AuthAD -> AD: Vérifie user toujours actif\n(optionnel)
+    activate AD
+    AD --> AuthAD: User status OK
+    deactivate AD
+    
+    AuthAD --> API: Token valide + User info
+    deactivate AuthAD
+    API --> AppAdmin: 200 OK\n{user, roles, permissions}
+    deactivate API
+    
+    AppAdmin --> Admin: Affiche contenu protégé
+else Token expiré ou absent
+    AppAdmin -> API: POST /auth/ad/refresh\n{refreshToken}
+    activate API
+    
+    API -> AuthAD: refreshToken(refreshToken)
+    activate AuthAD
+    
+    AuthAD -> AD: Vérifie user toujours actif
+    activate AD
+    AD --> AuthAD: User status OK
+    deactivate AD
+    
+    AuthAD -> AuthAD: Génère nouveau accessToken
+    AuthAD --> API: {newAccessToken, refreshToken}
+    deactivate AuthAD
+    
+    API --> AppAdmin: 200 OK\n{accessToken, refreshToken}
+    deactivate API
+    
+    AppAdmin -> AppAdmin: Met à jour token
+    AppAdmin --> Admin: Continue navigation
+end
+
+deactivate AppAdmin
+
+== Déconnexion ==
+Admin -> AppAdmin: Clic sur "Déconnexion"
+activate AppAdmin
+
+AppAdmin -> API: POST /auth/logout\nHeader: Authorization Bearer {token}
+activate API
+
+API -> API: Invalide token\n(supprime session Redis si applicable)
+API --> AppAdmin: 200 OK
+deactivate API
+
+AppAdmin -> AppAdmin: Supprime token\nlocalStorage/sessionStorage
+AppAdmin --> Admin: Redirection vers page de login
+
+deactivate AppAdmin
+
+@enduml

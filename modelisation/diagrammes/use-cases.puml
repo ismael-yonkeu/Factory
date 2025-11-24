@@ -1,0 +1,94 @@
+@startuml Diagramme de Cas d'Utilisation
+title Diagramme de Cas d'Utilisation - Plateforme de Digitalisation d'Usine
+
+left to right direction
+
+package "Partie Administration" {
+    actor "Administrateur" as Admin
+    actor "Superviseur" as Supervisor
+    
+    usecase "Se connecter (AD)" as UC_AD_Login
+    usecase "Gérer les utilisateurs" as UC_ManageUsers
+    usecase "Créer des checklists dynamiques" as UC_CreateChecklists
+    usecase "Modifier des checklists" as UC_EditChecklists
+    usecase "Supprimer des checklists" as UC_DeleteChecklists
+    usecase "Attribuer des checklists" as UC_AssignChecklists
+    usecase "Approuver des données collectées" as UC_ApproveData
+    usecase "Rejeter des données collectées" as UC_RejectData
+    usecase "Consulter le dashboard" as UC_ViewDashboard
+    usecase "Consulter les KPI" as UC_ViewKPI
+    usecase "Générer des rapports" as UC_GenerateReports
+    usecase "Exporter des données" as UC_ExportData
+    usecase "Configurer les paramètres système" as UC_ConfigSystem
+    usecase "Gérer les rôles et permissions" as UC_ManageRoles
+    usecase "Consulter l'historique des actions" as UC_ViewHistory
+}
+
+package "Partie Terrain (Web/Mobile)" {
+    actor "Opérateur Terrain" as Operator
+    
+    usecase "Se connecter (JWT)" as UC_JWT_Login
+    usecase "S'inscrire" as UC_Register
+    usecase "Réinitialiser mot de passe" as UC_ResetPassword
+    usecase "Consulter les checklists assignées" as UC_ViewAssignedChecklists
+    usecase "Remplir une checklist" as UC_FillChecklist
+    usecase "Sauvegarder une checklist (brouillon)" as UC_SaveDraft
+    usecase "Soumettre une checklist" as UC_SubmitChecklist
+    usecase "Ajouter des photos" as UC_AddPhotos
+    usecase "Ajouter des commentaires" as UC_AddComments
+    usecase "Signer électroniquement" as UC_SignElectronically
+    usecase "Consulter l'historique des soumissions" as UC_ViewSubmissions
+    usecase "Synchroniser les données (offline)" as UC_SyncData
+    usecase "Recevoir des notifications" as UC_ReceiveNotifications
+}
+
+' Relations Admin
+Admin --> UC_AD_Login
+Admin --> UC_ManageUsers
+Admin --> UC_CreateChecklists
+Admin --> UC_EditChecklists
+Admin --> UC_DeleteChecklists
+Admin --> UC_AssignChecklists
+Admin --> UC_ApproveData
+Admin --> UC_RejectData
+Admin --> UC_ViewDashboard
+Admin --> UC_ViewKPI
+Admin --> UC_GenerateReports
+Admin --> UC_ExportData
+Admin --> UC_ConfigSystem
+Admin --> UC_ManageRoles
+Admin --> UC_ViewHistory
+
+' Relations Supervisor
+Supervisor --> UC_AD_Login
+Supervisor --> UC_AssignChecklists
+Supervisor --> UC_ApproveData
+Supervisor --> UC_RejectData
+Supervisor --> UC_ViewDashboard
+Supervisor --> UC_ViewKPI
+Supervisor --> UC_GenerateReports
+Supervisor --> UC_ViewHistory
+
+' Relations Operator
+Operator --> UC_JWT_Login
+Operator --> UC_Register
+Operator --> UC_ResetPassword
+Operator --> UC_ViewAssignedChecklists
+Operator --> UC_FillChecklist
+Operator --> UC_SaveDraft
+Operator --> UC_SubmitChecklist
+Operator --> UC_AddPhotos
+Operator --> UC_AddComments
+Operator --> UC_SignElectronically
+Operator --> UC_ViewSubmissions
+Operator --> UC_SyncData
+Operator --> UC_ReceiveNotifications
+
+' Relations d'inclusion et d'extension
+UC_FillChecklist ..> UC_AddPhotos : <<include>>
+UC_FillChecklist ..> UC_AddComments : <<include>>
+UC_SubmitChecklist ..> UC_SignElectronically : <<include>>
+UC_ViewDashboard ..> UC_ViewKPI : <<include>>
+UC_GenerateReports ..> UC_ExportData : <<extend>>
+
+@enduml
