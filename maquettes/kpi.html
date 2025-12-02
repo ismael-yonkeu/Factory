@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPIs & Ratios - Système de Digitalisation Maintenance UCB</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Vérifier que Chart.js est chargé
+        window.addEventListener('load', function() {
+            console.log('Page loaded. Chart.js status:', typeof Chart !== 'undefined');
+            if (typeof Chart === 'undefined') {
+                console.error('❌ Chart.js not loaded! Please check your internet connection.');
+                document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:1rem;text-align:center;z-index:9999;">⚠️ Erreur: Chart.js n\'a pas pu être chargé. Vérifiez votre connexion internet.</div>');
+            } else {
+                console.log('✅ Chart.js loaded successfully');
+            }
+        });
+    </script>
+    <style>
+        /* KPI Cards - Style NetSuite plat */
+        .kpi-chart {
+            background: var(--ucb-white);
+            color: var(--text-primary);
+            padding: 1.5rem;
+            border-radius: 0;
+            margin-bottom: 0;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+            transition: none;
+            position: relative;
+        }
+        
+        .kpi-chart:hover {
+            box-shadow: none;
+        }
+        
+        .kpi-value {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 0.5rem;
+            text-shadow: none;
+            position: relative;
+            letter-spacing: -0.01em;
+        }
+        
+        .kpi-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            font-weight: var(--font-weight-normal);
+            margin-bottom: 1rem;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        
+        .kpi-target {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            background: transparent;
+            padding: 0.75rem 0 0 0;
+            border-radius: 0;
+        }
+        
+        .progress-bar {
+            background: var(--bg-color);
+            border-radius: 4px;
+            height: 8px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: none;
+        }
+        
+        .progress-fill {
+            background: var(--primary-color);
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            box-shadow: none;
+        }
+        
+        .kpi-icon {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .kpi-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            background: var(--bg-color);
+        }
+        
+        /* Variantes de couleurs pour les KPIs - Style NetSuite */
+        .kpi-chart.success {
+            background: var(--ucb-white);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .kpi-chart.success .kpi-value {
+            color: var(--success-color);
+        }
+        
+        .kpi-chart.warning {
+            background: var(--ucb-white);
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .kpi-chart.warning .kpi-value {
+            color: var(--warning-color);
+        }
+        
+        .kpi-chart.danger {
+            background: var(--ucb-white);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .kpi-chart.danger .kpi-value {
+            color: var(--danger-color);
+        }
+        
+        .kpi-chart.info {
+            background: var(--ucb-white);
+            border-left: 4px solid var(--info-color);
+        }
+        
+        .kpi-chart.info .kpi-value {
+            color: var(--info-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo_ucb.png" alt="Logo UCB" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Navigation</div>
+            <a href="dashboard.html" class="sidebar-nav-item" data-tooltip="Dashboard">
+                <span class="sidebar-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="checklists.html" class="sidebar-nav-item" data-tooltip="Checklists">
+                <span class="sidebar-nav-icon">✅</span>
+                <span>Checklists</span>
+            </a>
+            <a href="equipements.html" class="sidebar-nav-item" data-tooltip="Équipements">
+                <span class="sidebar-nav-icon">⚙️</span>
+                <span>Équipements</span>
+            </a>
+            <a href="kpi.html" class="sidebar-nav-item active" data-tooltip="KPIs & Ratios">
+                <span class="sidebar-nav-icon">📈</span>
+                <span>KPIs & Ratios</span>
+            </a>
+            <a href="rapports.html" class="sidebar-nav-item" data-tooltip="Rapports">
+                <span class="sidebar-nav-icon">📄</span>
+                <span>Rapports</span>
+            </a>
+            <a href="wtp.html" class="sidebar-nav-item" data-tooltip="WTP">
+                <span class="sidebar-nav-icon">💧</span>
+                <span>WTP</span>
+            </a>
+        </nav>
+        
+        <!-- Sidebar Portlets -->
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Rappels</span>
+            </div>
+            <div class="sidebar-portlet-body">
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--danger-color); padding-left: 0.75rem;">
+                    <span>3 Inspections en retard</span>
+                    <span class="sidebar-portlet-item-count">3</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--warning-color); padding-left: 0.75rem;">
+                    <span>8 Checklists en attente</span>
+                    <span class="sidebar-portlet-item-count">8</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--success-color); padding-left: 0.75rem;">
+                    <span>0 Non-conformités critiques</span>
+                    <span class="sidebar-portlet-item-count">0</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Comparative Performance</span>
+                <select style="font-size: var(--font-size-xs); padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border-radius: 4px;" onchange="updateSidebarChart(this.value)">
+                    <option value="monthly">This Month vs Last Month</option>
+                    <option value="quarterly">This Quarter vs Last Quarter</option>
+                </select>
+            </div>
+            <div class="sidebar-portlet-body" style="position: relative; height: 200px;">
+                <canvas id="comparativeChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Top 5 Équipements By Availability</span>
+                <select style="font-size: var(--font-size-xs); padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border-radius: 4px;" onchange="updateTopEquipmentChart(this.value)">
+                    <option value="monthly">This month</option>
+                    <option value="quarterly">This quarter</option>
+                </select>
+            </div>
+            <div class="sidebar-portlet-body" style="position: relative; height: 200px;">
+                <canvas id="topEquipmentChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Top 5 Équipements By Maintenance</span>
+                <select style="font-size: var(--font-size-xs); padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border-radius: 4px;" onchange="updateTopMaintenanceChart(this.value)">
+                    <option value="monthly">This month</option>
+                    <option value="quarterly">This quarter</option>
+                </select>
+            </div>
+            <div class="sidebar-portlet-body" style="position: relative; height: 200px;">
+                <canvas id="topMaintenanceChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Settings</span>
+            </div>
+            <div class="sidebar-portlet-body">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="#" style="color: rgba(255,255,255,0.75); font-size: var(--font-size-sm); text-decoration: none; padding: 0.5rem 0;">Personalize Dashboard</a>
+                    <a href="#" style="color: rgba(255,255,255,0.75); font-size: var(--font-size-sm); text-decoration: none; padding: 0.5rem 0;">Set Preferences</a>
+                    <a href="#" style="color: rgba(255,255,255,0.75); font-size: var(--font-size-sm); text-decoration: none; padding: 0.5rem 0;">Publish Dashboard</a>
+                    <a href="#" style="color: rgba(255,255,255,0.75); font-size: var(--font-size-sm); text-decoration: none; padding: 0.5rem 0;">Export Data</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>📈 KPIs & Ratios</h1>
+            </div>
+            <div class="page-header-right">
+                <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">
+                    <option>Ce mois</option>
+                    <option>Ce trimestre</option>
+                    <option>Cette année</option>
+                </select>
+                <button class="header-icon-btn notification" title="Notifications">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu" title="Menu utilisateur">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Technicien Maintenance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-container" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+        <!-- Row 1: SuiteAccess -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">Quick Access</span>
+            </div>
+            <div class="portlet-body">
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card" style="background: #5BC0DE; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease; text-align: center; padding: 2rem 1rem;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Reports</div>
+                    </div>
+                    <div class="stat-card" style="background: #28A745; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease; text-align: center; padding: 2rem 1rem;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Analytics</div>
+                    </div>
+                    <div class="stat-card" style="background: #DC3545; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease; text-align: center; padding: 2rem 1rem;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Equipment</div>
+                    </div>
+                    <div class="stat-card" style="background: #FFC107; border: none; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; text-align: center; padding: 2rem 1rem;">
+                        <div class="stat-value" style="color: var(--text-primary); font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                        <div class="stat-label" style="color: var(--text-primary); font-weight: var(--font-weight-medium);">Checklists</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 2: KPI Meters -->
+        <div class="grid grid-2">
+            <div class="portlet">
+                <div class="portlet-header">
+                    <span class="portlet-title">KPI Meter</span>
+                </div>
+                <div class="portlet-body" style="text-align: center; padding: 2rem;">
+                    <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: 1rem; color: var(--text-primary);">Utility Equipment Availability</div>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="availabilityGauge"></canvas>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 1rem; font-size: var(--font-size-sm); color: var(--text-secondary);">
+                        <span>Target: 90%</span>
+                        <span>Current: 96.8%</span>
+                        <span>Max: 100%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="portlet">
+                <div class="portlet-header">
+                    <span class="portlet-title">KPI Meter</span>
+                </div>
+                <div class="portlet-body" style="text-align: center; padding: 2rem;">
+                    <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: 1rem; color: var(--text-primary);">Maintenance Compliance</div>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="complianceGauge"></canvas>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 1rem; font-size: var(--font-size-sm); color: var(--text-secondary);">
+                        <span>Target: 90%</span>
+                        <span>Current: 100%</span>
+                        <span>Max: 100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 3: Navigation Shortcuts & Top 25 -->
+        <div class="grid grid-2">
+            <div class="portlet">
+                <div class="portlet-header">
+                    <span class="portlet-title">Navigation Shortcuts</span>
+                </div>
+                <div class="portlet-body">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                        <div>
+                            <div style="font-weight: var(--font-weight-semibold); margin-bottom: 0.75rem; color: var(--text-primary);">Maintenance</div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <a href="checklists.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Checklists</a>
+                                <a href="equipements.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Équipements</a>
+                                <a href="rapports.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Rapports</a>
+                                <a href="wtp.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">WTP</a>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-weight: var(--font-weight-semibold); margin-bottom: 0.75rem; color: var(--text-primary);">Analytics</div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <a href="kpi.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">KPIs & Ratios</a>
+                                <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Performance Analysis</a>
+                                <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Trends</a>
+                                <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Forecasts</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="portlet">
+                <div class="portlet-header">
+                    <span class="portlet-title">Top 25 Équipements By Availability</span>
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updateTop25Chart(this.value)">
+                        <option value="quarterly">This fiscal quarter</option>
+                        <option value="monthly">This month</option>
+                        <option value="yearly">This year</option>
+                    </select>
+                </div>
+                <div class="portlet-body" style="position: relative; height: 300px;">
+                    <canvas id="top25Chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 4: Key Performance Indicators -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📊 Key Performance Indicators</span>
+            </div>
+            <div class="portlet-body">
+                <!-- Summary Cards with Trends -->
+                <div class="grid grid-4" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem;">Utility Equipment Availability</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--success-color); margin-bottom: 0.25rem;">96.8%</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>2.1%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem;">Preventive Maintenance</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--success-color); margin-bottom: 0.25rem;">100%</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>5.0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem;">Mean Time to Repair</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--danger-color); margin-bottom: 0.25rem;">2.5h</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--danger-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>8.6%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem;">Equipment Availability</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--success-color); margin-bottom: 0.25rem;">94.2%</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>3.5%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Indicator</th>
+                                <th>Period</th>
+                                <th>Current</th>
+                                <th>Previous</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Utility Equipment Availability</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>96.8%</td>
+                                <td>94.7%</td>
+                                <td style="color: var(--success-color);">↑ 2.1%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Preventive Maintenance Compliance</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>100%</td>
+                                <td>95.0%</td>
+                                <td style="color: var(--success-color);">↑ 5.0%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mean Time to Repair (MTTR)</strong></td>
+                                <td>This Period vs. Last Period</td>
+                                <td>2.5h</td>
+                                <td>2.3h</td>
+                                <td style="color: var(--danger-color);">↑ 8.6%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Equipment Availability</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>94.2%</td>
+                                <td>90.7%</td>
+                                <td style="color: var(--success-color);">↑ 3.5%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Steam Fuel Ratio</strong></td>
+                                <td>This Period vs. Last Period</td>
+                                <td>19.5</td>
+                                <td>18.2</td>
+                                <td style="color: var(--success-color);">↑ 7.1%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs de Sécurité -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">🛡️ KPIs de Sécurité</span>
+            </div>
+            <div class="portlet-body">
+            <div class="grid grid-4">
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">🛡️</div>
+                    <div class="kpi-value">0</div>
+                    <div class="kpi-label">LTI (Lost Time Injuries)</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> 0</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">🏥</div>
+                    <div class="kpi-value">0</div>
+                    <div class="kpi-label">First Aid Injury (FAI)</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> 0</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">✅</div>
+                    <div class="kpi-value">100%</div>
+                    <div class="kpi-label">Behavioural Safety Compliance</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> 100%</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="kpi-chart warning">
+                    <div class="kpi-icon">⚠️</div>
+                    <div class="kpi-value">86%</div>
+                    <div class="kpi-label">Safety Incidence & Observations Closed</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> > 80%</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 86%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs de Performance Équipements -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">⚙️ KPIs de Performance Équipements</span>
+            </div>
+            <div class="portlet-body">
+            <div class="grid grid-4">
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">⚙️</div>
+                    <div class="kpi-value">96.8%</div>
+                    <div class="kpi-label">Utility Equipment Availability</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> > 90%</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 96.8%;"></div>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">🔧</div>
+                    <div class="kpi-value">100%</div>
+                    <div class="kpi-label">Preventive Maintenance Compliance</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> > 90%</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">⛽</div>
+                    <div class="kpi-value">0.24</div>
+                    <div class="kpi-label">Diesel Generator Specific Consumption</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> ≤ 0.25 Ltr/kWhr</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart danger">
+                    <div class="kpi-icon">⏱️</div>
+                    <div class="kpi-value">2.5h</div>
+                    <div class="kpi-label">Mean Time to Repair (MTTR)</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> < 0.5 Hrs</span>
+                        <span class="kpi-status" style="background: rgba(255, 255, 255, 0.3);">❌ Non atteint</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs de Performance Opérationnelle -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📊 KPIs de Performance Opérationnelle</span>
+            </div>
+            <div class="portlet-body">
+            <div class="grid grid-4">
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">🔥</div>
+                    <div class="kpi-value">19.5</div>
+                    <div class="kpi-label">Steam Fuel Ratio</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> > 12 Kg/LOF</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">💨</div>
+                    <div class="kpi-value">435</div>
+                    <div class="kpi-label">CO2 Production Ratio</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> ≥ 400 Kg/hr</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart success">
+                    <div class="kpi-icon">⚡</div>
+                    <div class="kpi-value">2.1</div>
+                    <div class="kpi-label">Site Energy Usage Ratio</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> 7.31 kWh/hl</span>
+                        <span class="kpi-status">✅ Atteint</span>
+                    </div>
+                </div>
+                <div class="kpi-chart warning">
+                    <div class="kpi-icon">💧</div>
+                    <div class="kpi-value">6.2</div>
+                    <div class="kpi-label">Site Water Usage Ratio</div>
+                    <div class="kpi-target">
+                        <span><strong>Target:</strong> 4.7 hl/hl</span>
+                        <span class="kpi-status">⚠️ À améliorer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disponibilité par équipement -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📋 Disponibilité des Équipements</span>
+                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">📥 Exporter</button>
+            </div>
+            <div class="portlet-body">
+                <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Équipement</th>
+                            <th>No Installed</th>
+                            <th>Uptime Hour/WK</th>
+                            <th>Downtime Hour/Wk</th>
+                            <th>Number of Failure/Wk</th>
+                            <th>Availability (%)</th>
+                            <th>Failure Rate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Air Compressor</strong></td>
+                            <td>3</td>
+                            <td>720</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td><strong style="color: var(--success-color);">100%</strong></td>
+                            <td>0</td>
+                            <td><span class="badge badge-success">✅ Opérationnel</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chiller-Sabroe</strong></td>
+                            <td>5</td>
+                            <td>552</td>
+                            <td>168</td>
+                            <td>1</td>
+                            <td><strong style="color: var(--warning-color);">76.7%</strong></td>
+                            <td>0.0014</td>
+                            <td><span class="badge badge-warning">⚠️ Panne partielle</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Boiler</strong></td>
+                            <td>2</td>
+                            <td>720</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td><strong style="color: var(--success-color);">100%</strong></td>
+                            <td>0</td>
+                            <td><span class="badge badge-success">✅ Opérationnel</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>WTP (UF+RO+Madiba UF)</strong></td>
+                            <td>3</td>
+                            <td>617</td>
+                            <td>103</td>
+                            <td>1</td>
+                            <td><strong style="color: var(--warning-color);">85.7%</strong></td>
+                            <td>0.0014</td>
+                            <td><span class="badge badge-warning">⚠️ Maintenance</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Diesel Generator (Power)</strong></td>
+                            <td>2</td>
+                            <td>720</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td><strong style="color: var(--success-color);">100%</strong></td>
+                            <td>0</td>
+                            <td><span class="badge badge-success">✅ Opérationnel</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CO2 Plant</strong></td>
+                            <td>3</td>
+                            <td>360</td>
+                            <td>360</td>
+                            <td>2</td>
+                            <td><strong style="color: var(--danger-color);">50%</strong></td>
+                            <td>0.0028</td>
+                            <td><span class="badge badge-danger">❌ Hors service</span></td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteneur pour les graphiques d'évolution mensuelle en 2 colonnes -->
+        <div class="monthly-trends-grid">
+        
+        <!-- Évolution temporelle - Utility Equipment Availability -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Utility Equipment Availability - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('availabilityChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="availabilityChart" data-type="line" title="Line Chart" onclick="changeChartType('availabilityChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="availabilityChart" data-type="bar" title="Bar Chart" onclick="changeChartType('availabilityChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="availabilityChart" data-type="area" title="Area Chart" onclick="changeChartType('availabilityChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="availabilityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - Preventive Maintenance Compliance -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Preventive Maintenance Compliance - Monthly Trend</span>
+                <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updateChart('maintenanceChart', this.value)">
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="quarterly">Quarterly</option>
+                </select>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="maintenanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - Steam Fuel Ratio -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Steam Fuel Ratio - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('steamChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="steamChart" data-type="line" title="Line Chart" onclick="changeChartType('steamChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="steamChart" data-type="bar" title="Bar Chart" onclick="changeChartType('steamChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="steamChart" data-type="area" title="Area Chart" onclick="changeChartType('steamChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="steamChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - Mean Time to Repair -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Mean Time to Repair (MTTR) - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('mttrChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="mttrChart" data-type="line" title="Line Chart" onclick="changeChartType('mttrChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="mttrChart" data-type="bar" title="Bar Chart" onclick="changeChartType('mttrChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="mttrChart" data-type="area" title="Area Chart" onclick="changeChartType('mttrChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="mttrChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - CO2 Production Ratio -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 CO2 Production Ratio - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('co2Chart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="co2Chart" data-type="line" title="Line Chart" onclick="changeChartType('co2Chart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="co2Chart" data-type="bar" title="Bar Chart" onclick="changeChartType('co2Chart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="co2Chart" data-type="area" title="Area Chart" onclick="changeChartType('co2Chart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="co2Chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - Site Energy Usage Ratio -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Site Energy Usage Ratio - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('energyChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="energyChart" data-type="line" title="Line Chart" onclick="changeChartType('energyChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="energyChart" data-type="bar" title="Bar Chart" onclick="changeChartType('energyChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="energyChart" data-type="area" title="Area Chart" onclick="changeChartType('energyChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="energyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Évolution temporelle - Site Water Usage Ratio -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Site Water Usage Ratio - Monthly Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('waterChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="waterChart" data-type="line" title="Line Chart" onclick="changeChartType('waterChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="waterChart" data-type="bar" title="Bar Chart" onclick="changeChartType('waterChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="waterChart" data-type="area" title="Area Chart" onclick="changeChartType('waterChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="waterChart"></canvas>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+        // Configuration Chart.js - Style NetSuite
+        Chart.defaults.font.family = "'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = '#6C757D';
+        Chart.defaults.borderColor = '#DEE2E6';
+        Chart.defaults.backgroundColor = '#5BC0DE';
+
+        // Données pour les graphiques mensuels (6 derniers mois)
+        const monthlyLabels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        // Utility Equipment Availability (en %)
+        const availabilityData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [92.5, 93.2, 94.1, 94.7, 95.8, 96.8]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [95.2, 95.8, 96.1, 96.5, 96.8, 96.8]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [91.5, 92.8, 93.5, 94.2, 95.1, 96.8]
+            }
+        };
+
+        // Preventive Maintenance Compliance (en %)
+        const maintenanceData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [88.5, 90.2, 92.1, 93.5, 95.0, 100]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [98.5, 99.2, 99.5, 99.8, 100, 100]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [85.2, 87.8, 90.5, 92.2, 94.1, 100]
+            }
+        };
+
+        // Steam Fuel Ratio
+        const steamData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [16.5, 17.2, 17.8, 18.1, 18.8, 19.5]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [19.2, 19.4, 19.5, 19.5, 19.5, 19.5]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [15.8, 16.5, 17.2, 17.8, 18.5, 19.5]
+            }
+        };
+
+        // Mean Time to Repair (MTTR) en heures
+        const mttrData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [3.2, 3.0, 2.8, 2.7, 2.6, 2.5]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [2.4, 2.5, 2.5, 2.5, 2.5, 2.5]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [3.5, 3.3, 3.0, 2.8, 2.7, 2.5]
+            }
+        };
+
+        // CO2 Production Ratio (Kg/hr)
+        const co2Data = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [410, 415, 420, 425, 430, 435]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [432, 433, 434, 435, 435, 435]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [400, 405, 410, 415, 425, 435]
+            }
+        };
+
+        // Site Energy Usage Ratio (kWh/hl)
+        const energyData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [2.5, 2.4, 2.3, 2.2, 2.15, 2.1]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [2.12, 2.11, 2.1, 2.1, 2.1, 2.1]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [2.8, 2.6, 2.4, 2.3, 2.2, 2.1]
+            }
+        };
+
+        // Site Water Usage Ratio (hl/hl)
+        const waterData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [6.8, 6.6, 6.5, 6.4, 6.3, 6.2]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [6.25, 6.23, 6.22, 6.21, 6.2, 6.2]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [7.2, 6.9, 6.7, 6.5, 6.4, 6.2]
+            }
+        };
+
+        // Fonction pour calculer la moyenne mobile
+        function calculateMovingAverage(data, window = 3) {
+            const movingAvg = [];
+            for (let i = 0; i < data.length; i++) {
+                const start = Math.max(0, i - window + 1);
+                const subset = data.slice(start, i + 1);
+                const avg = subset.reduce((a, b) => a + b, 0) / subset.length;
+                movingAvg.push(avg);
+            }
+            return movingAvg;
+        }
+
+        // Fonction pour créer un graphique avec Moving Average
+        function createChart(canvasId, data, label, unit = '', color = '#5BC0DE', chartType = 'bar') {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const chartData = data.monthly;
+            const movingAvg = calculateMovingAverage(chartData.data, 3);
+            
+            return new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: label,
+                            data: chartData.data,
+                            backgroundColor: chartType === 'line' ? 'transparent' : color,
+                            borderColor: color,
+                            borderWidth: 2,
+                            fill: chartType === 'area',
+                            tension: chartType === 'line' || chartType === 'area' ? 0.4 : 0
+                        },
+                        {
+                            label: 'Moving Average',
+                            data: movingAvg,
+                            borderColor: '#6C757D',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                },
+                                color: '#6C757D'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#212529',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF',
+                            borderColor: '#DEE2E6',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const datasetLabel = context.dataset.label || label;
+                                    let value = context.parsed.y;
+                                    if (unit === '%') {
+                                        value = value.toFixed(1) + unit;
+                                    } else if (unit.includes('Kg') || unit.includes('kWh') || unit.includes('hl')) {
+                                        value = value.toFixed(1) + ' ' + unit;
+                                    } else if (unit === 'h') {
+                                        value = value.toFixed(1) + unit;
+                                    } else if (unit) {
+                                        value = value + unit;
+                                    }
+                                    return datasetLabel + ': ' + value;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    if (unit === '%') {
+                                        return value.toFixed(1) + unit;
+                                    } else if (unit.includes('Kg') || unit.includes('kWh') || unit.includes('hl')) {
+                                        return value.toFixed(1) + ' ' + unit;
+                                    } else if (unit === 'h') {
+                                        return value.toFixed(1) + unit;
+                                    }
+                                    return value + unit;
+                                }
+                            },
+                            grid: {
+                                color: '#DEE2E6',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fonction pour changer le type de graphique
+        function changeChartType(canvasId, chartType) {
+            const chart = window.charts[canvasId];
+            if (!chart) return;
+
+            // Mettre à jour le type de graphique
+            chart.config.type = chartType;
+            
+            // Mettre à jour le style selon le type
+            chart.data.datasets[0].backgroundColor = chartType === 'line' ? 'transparent' : chart.data.datasets[0].borderColor;
+            chart.data.datasets[0].fill = chartType === 'area';
+            chart.data.datasets[0].tension = chartType === 'line' || chartType === 'area' ? 0.4 : 0;
+
+            // Mettre à jour les boutons de type
+            const buttons = document.querySelectorAll(`[data-chart="${canvasId}"]`);
+            buttons.forEach(btn => {
+                if (btn.dataset.type === chartType) {
+                    btn.style.background = 'var(--primary-color)';
+                    btn.style.color = 'var(--ucb-white)';
+                } else {
+                    btn.style.background = 'var(--ucb-white)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+
+            chart.update();
+        }
+
+        // Fonction pour mettre à jour la période
+        function updatePeriod(canvasId, period) {
+            const chart = window.charts[canvasId];
+            if (!chart) return;
+
+            let data;
+            let color = '#5BC0DE';
+
+            switch(canvasId) {
+                case 'availabilityChart':
+                    data = availabilityData[period];
+                    color = '#28A745';
+                    break;
+                case 'maintenanceChart':
+                    data = maintenanceData[period];
+                    color = '#28A745';
+                    break;
+                case 'steamChart':
+                    data = steamData[period];
+                    color = '#17A2B8';
+                    break;
+                case 'mttrChart':
+                    data = mttrData[period];
+                    color = '#DC3545';
+                    break;
+                case 'co2Chart':
+                    data = co2Data[period];
+                    color = '#FFA500';
+                    break;
+                case 'energyChart':
+                    data = energyData[period];
+                    color = '#17A2B8';
+                    break;
+                case 'waterChart':
+                    data = waterData[period];
+                    color = '#FFC107';
+                    break;
+            }
+
+            const movingAvg = calculateMovingAverage(data.data, 3);
+            
+            chart.data.labels = data.labels;
+            chart.data.datasets[0].data = data.data;
+            chart.data.datasets[0].borderColor = color;
+            chart.data.datasets[0].backgroundColor = chart.config.type === 'line' ? 'transparent' : color;
+            chart.data.datasets[1].data = movingAvg;
+            chart.update();
+        }
+
+
+        // Initialiser tous les graphiques au chargement
+        window.charts = {};
+        
+        // Fonction pour créer un gauge (semi-circulaire)
+        function createGauge(canvasId, value, maxValue, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas not found:', canvasId);
+                return null;
+            }
+            
+            try {
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Could not get 2d context for:', canvasId);
+                    return null;
+                }
+                
+                const percentage = (value / maxValue) * 100;
+                
+                // Créer un graphique donut avec un angle de 180 degrés pour ressembler à un gauge
+                const chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Value', 'Remaining'],
+                        datasets: [{
+                            data: [percentage, 100 - percentage],
+                            backgroundColor: [color, '#E5E7EB'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        circumference: 180,
+                        rotation: -90,
+                        cutout: '75%',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                });
+                
+                return chart;
+            } catch (error) {
+                console.error('Error creating gauge:', canvasId, error);
+                return null;
+            }
+        }
+
+        // Fonction pour créer un graphique donut
+        function createDonutChart(canvasId, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas not found:', canvasId);
+                return null;
+            }
+            
+            try {
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Could not get 2d context for:', canvasId);
+                    return null;
+                }
+                
+                return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                },
+                                color: '#6C757D'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#212529',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF'
+                        }
+                    }
+                }
+            });
+            } catch (error) {
+                console.error('Error creating donut chart:', canvasId, error);
+                return null;
+            }
+        }
+
+        // Fonction pour créer un graphique comparatif (barres)
+        function createComparativeChart(canvasId, data) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas not found:', canvasId);
+                return null;
+            }
+            
+            try {
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Could not get 2d context for:', canvasId);
+                    return null;
+                }
+                
+                return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: data.series1.label,
+                            data: data.series1.values,
+                            backgroundColor: '#DC3545',
+                            borderColor: '#DC3545',
+                            borderWidth: 0
+                        },
+                        {
+                            label: data.series2.label,
+                            data: data.series2.values,
+                            backgroundColor: '#FFC107',
+                            borderColor: '#FFC107',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                },
+                                color: '#6C757D'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: '#DEE2E6'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            } catch (error) {
+                console.error('Error creating comparative chart:', canvasId, error);
+                return null;
+            }
+        }
+
+        // Fonctions pour mettre à jour les nouveaux graphiques
+        function updateSidebarChart(period) {
+            const chart = window.charts.comparativeChart;
+            if (!chart) return;
+            // Logique de mise à jour
+        }
+
+        function updateTopEquipmentChart(period) {
+            const chart = window.charts.topEquipmentChart;
+            if (!chart) return;
+            // Logique de mise à jour
+        }
+
+        function updateTopMaintenanceChart(period) {
+            const chart = window.charts.topMaintenanceChart;
+            if (!chart) return;
+            // Logique de mise à jour
+        }
+
+        function updateTop25Chart(period) {
+            const chart = window.charts.top25Chart;
+            if (!chart) return;
+            // Logique de mise à jour
+        }
+
+        // Vérifier que Chart.js est chargé avant d'initialiser
+        function waitForChartJS(callback, maxAttempts = 20) {
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js is ready!');
+                callback();
+            } else if (maxAttempts > 0) {
+                console.log('Waiting for Chart.js...', maxAttempts);
+                setTimeout(function() {
+                    waitForChartJS(callback, maxAttempts - 1);
+                }, 100);
+            } else {
+                console.error('Chart.js failed to load after waiting');
+                alert('Erreur: Chart.js n\'a pas pu être chargé. Vérifiez votre connexion internet.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, waiting for Chart.js...');
+            console.log('Chart.js available:', typeof Chart !== 'undefined');
+            
+            // Vérifier immédiatement si Chart.js est déjà chargé
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js already loaded, initializing charts...');
+                initializeAllCharts();
+            } else {
+                // Attendre que Chart.js se charge
+                waitForChartJS(function() {
+                    console.log('Chart.js loaded, initializing charts...');
+                    initializeAllCharts();
+                });
+            }
+        });
+
+        function initializeAllCharts() {
+            // Vérifier que Chart.js est toujours disponible
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js is not available! Cannot initialize charts.');
+                return;
+            }
+            
+            // Vérifier que window.charts existe
+            if (!window.charts) {
+                window.charts = {};
+            }
+            
+            // Attendre un peu plus pour s'assurer que tous les éléments sont rendus
+            setTimeout(function() {
+                try {
+                    console.log('Starting chart initialization...');
+                    console.log('Number of canvas elements found:', document.querySelectorAll('canvas').length);
+                    // Gauges
+                    const availabilityGaugeCanvas = document.getElementById('availabilityGauge');
+                    if (availabilityGaugeCanvas) {
+                        window.charts.availabilityGauge = createGauge('availabilityGauge', 96.8, 100, '#28A745');
+                        console.log('Availability gauge created:', window.charts.availabilityGauge);
+                    } else {
+                        console.error('Availability gauge canvas not found');
+                    }
+                    
+                    const complianceGaugeCanvas = document.getElementById('complianceGauge');
+                    if (complianceGaugeCanvas) {
+                        window.charts.complianceGauge = createGauge('complianceGauge', 100, 100, '#28A745');
+                        console.log('Compliance gauge created:', window.charts.complianceGauge);
+                    } else {
+                        console.error('Compliance gauge canvas not found');
+                    }
+                    
+                    // Comparative Chart
+                    const comparativeCanvas = document.getElementById('comparativeChart');
+                    if (comparativeCanvas) {
+                        window.charts.comparativeChart = createComparativeChart('comparativeChart', {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            series1: { label: 'This Month', values: [92, 93, 94, 95, 96, 96.8] },
+                            series2: { label: 'Last Month', values: [90, 91, 92, 93, 94, 94.7] }
+                        });
+                        console.log('Comparative chart created:', window.charts.comparativeChart);
+                    } else {
+                        console.error('Comparative chart canvas not found');
+                    }
+                    
+                    // Top Equipment Charts
+                    const topEquipmentCanvas = document.getElementById('topEquipmentChart');
+                    if (topEquipmentCanvas) {
+                        window.charts.topEquipmentChart = createDonutChart('topEquipmentChart', {
+                            labels: ['Sabroe 1', 'Sabroe 2', 'Boiler', 'Compressor', 'Others'],
+                            values: [25, 20, 18, 15, 22]
+                        }, ['#DC3545', '#FFC107', '#28A745', '#17A2B8', '#6C757D']);
+                        console.log('Top equipment chart created:', window.charts.topEquipmentChart);
+                    } else {
+                        console.error('Top equipment chart canvas not found');
+                    }
+                    
+                    const topMaintenanceCanvas = document.getElementById('topMaintenanceChart');
+                    if (topMaintenanceCanvas) {
+                        window.charts.topMaintenanceChart = createDonutChart('topMaintenanceChart', {
+                            labels: ['Sabroe 1', 'Sabroe 2', 'Boiler', 'Compressor', 'Others'],
+                            values: [30, 25, 20, 15, 10]
+                        }, ['#DC3545', '#FFC107', '#28A745', '#17A2B8', '#6C757D']);
+                        console.log('Top maintenance chart created:', window.charts.topMaintenanceChart);
+                    } else {
+                        console.error('Top maintenance chart canvas not found');
+                    }
+                    
+                    // Top 25 Chart
+                    const top25Canvas = document.getElementById('top25Chart');
+                    if (top25Canvas) {
+                        window.charts.top25Chart = createDonutChart('top25Chart', {
+                            labels: ['Top 5', 'Top 6-10', 'Top 11-15', 'Top 16-20', 'Top 21-25'],
+                            values: [30, 25, 20, 15, 10]
+                        }, ['#DC3545', '#FFC107', '#28A745', '#17A2B8', '#6C757D']);
+                        console.log('Top 25 chart created:', window.charts.top25Chart);
+                    } else {
+                        console.error('Top 25 chart canvas not found');
+                    }
+                    // Utility Equipment Availability
+                    const availabilityCanvas = document.getElementById('availabilityChart');
+                    if (availabilityCanvas) {
+                        window.charts.availabilityChart = createChart('availabilityChart', availabilityData, 'Utility Equipment Availability', '%', '#28A745');
+                        console.log('Availability chart created');
+                    }
+                    
+                    // Preventive Maintenance Compliance
+                    const maintenanceCanvas = document.getElementById('maintenanceChart');
+                    if (maintenanceCanvas) {
+                        window.charts.maintenanceChart = createChart('maintenanceChart', maintenanceData, 'Preventive Maintenance Compliance', '%', '#28A745');
+                        console.log('Maintenance chart created');
+                    }
+                    
+                    // Steam Fuel Ratio
+                    const steamCanvas = document.getElementById('steamChart');
+                    if (steamCanvas) {
+                        window.charts.steamChart = createChart('steamChart', steamData, 'Steam Fuel Ratio', '', '#17A2B8');
+                        console.log('Steam chart created');
+                    }
+                    
+                    // Mean Time to Repair
+                    const mttrCanvas = document.getElementById('mttrChart');
+                    if (mttrCanvas) {
+                        window.charts.mttrChart = createChart('mttrChart', mttrData, 'Mean Time to Repair (MTTR)', 'h', '#DC3545');
+                        console.log('MTTR chart created');
+                    }
+                    
+                    // CO2 Production Ratio
+                    const co2Canvas = document.getElementById('co2Chart');
+                    if (co2Canvas) {
+                        window.charts.co2Chart = createChart('co2Chart', co2Data, 'CO2 Production Ratio', ' Kg/hr', '#FFA500');
+                        console.log('CO2 chart created');
+                    }
+                    
+                    // Site Energy Usage Ratio
+                    const energyCanvas = document.getElementById('energyChart');
+                    if (energyCanvas) {
+                        window.charts.energyChart = createChart('energyChart', energyData, 'Site Energy Usage Ratio', ' kWh/hl', '#17A2B8');
+                        console.log('Energy chart created');
+                    }
+                    
+                    // Site Water Usage Ratio
+                    const waterCanvas = document.getElementById('waterChart');
+                    if (waterCanvas) {
+                        window.charts.waterChart = createChart('waterChart', waterData, 'Site Water Usage Ratio', ' hl/hl', '#FFC107');
+                        console.log('Water chart created');
+                    }
+                    } catch (error) {
+                        console.error('Error initializing charts:', error);
+                        console.error(error.stack);
+                    }
+                    console.log('Chart initialization complete. Total charts:', Object.keys(window.charts).length);
+                }, 300); // Augmenter le délai à 300ms pour s'assurer que tout est rendu
+        }
+    </script>
+</body>
+</html>
+

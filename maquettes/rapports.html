@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports - Système de Digitalisation Maintenance UCB</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo_ucb.png" alt="Logo UCB" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Navigation principale</div>
+            <a href="dashboard.html" class="sidebar-nav-item" data-tooltip="Dashboard">
+                <span class="sidebar-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="checklists.html" class="sidebar-nav-item" data-tooltip="Checklists">
+                <span class="sidebar-nav-icon">✅</span>
+                <span>Checklists</span>
+            </a>
+            <a href="equipements.html" class="sidebar-nav-item" data-tooltip="Équipements">
+                <span class="sidebar-nav-icon">⚙️</span>
+                <span>Équipements</span>
+            </a>
+            <a href="kpi.html" class="sidebar-nav-item" data-tooltip="KPIs & Ratios">
+                <span class="sidebar-nav-icon">📈</span>
+                <span>KPIs & Ratios</span>
+            </a>
+            <a href="rapports.html" class="sidebar-nav-item active" data-tooltip="Rapports">
+                <span class="sidebar-nav-icon">📄</span>
+                <span>Rapports</span>
+            </a>
+            <a href="wtp.html" class="sidebar-nav-item" data-tooltip="WTP">
+                <span class="sidebar-nav-icon">💧</span>
+                <span>WTP</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title">Autres</div>
+            <a href="index.html" class="sidebar-nav-item" data-tooltip="Accueil">
+                <span class="sidebar-nav-icon">🏠</span>
+                <span>Accueil</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+    <div class="page-container">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>📄 Rapports</h1>
+            </div>
+            <div class="page-header-right">
+                <button class="header-icon-btn notification" title="Notifications">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu" title="Menu utilisateur">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Technicien Maintenance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types de rapports -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Types de Rapports</h2>
+            </div>
+            <div class="grid grid-3">
+                <div class="nav-card" style="text-align: left; align-items: flex-start;">
+                    <div class="nav-icon">📅</div>
+                    <h3>Hebdomadaire</h3>
+                    <p>Rapports de performance hebdomadaire, synthèses des consommations, disponibilité des équipements</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Générer</button>
+                </div>
+                <div class="nav-card" style="text-align: left; align-items: flex-start;">
+                    <div class="nav-icon">📆</div>
+                    <h3>Mensuel</h3>
+                    <p>Monthly Performance Tracker, rapports de disponibilité mensuels, analyse des tendances</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Générer</button>
+                </div>
+                <div class="nav-card" style="text-align: left; align-items: flex-start;">
+                    <div class="nav-icon">📊</div>
+                    <h3>Personnalisé</h3>
+                    <p>Créez votre propre rapport avec filtres par date, équipement, intervenant, statut</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Créer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres pour rapport personnalisé -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Paramètres du Rapport</h2>
+            </div>
+            <div class="grid grid-4">
+                <div class="form-group">
+                    <label class="form-label">Période</label>
+                    <select class="form-select">
+                        <option>Sélectionner...</option>
+                        <option>Cette semaine</option>
+                        <option>Ce mois</option>
+                        <option>Ce trimestre</option>
+                        <option>Cette année</option>
+                        <option>Personnalisé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date début</label>
+                    <input type="date" class="form-input" value="2025-01-01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date fin</label>
+                    <input type="date" class="form-input" value="2025-01-31">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type d'équipement</label>
+                    <select class="form-select">
+                        <option>Tous</option>
+                        <option>Électrique</option>
+                        <option>Mécanique</option>
+                        <option>Utilitaire</option>
+                        <option>WTP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Équipement</label>
+                    <select class="form-select">
+                        <option>Tous</option>
+                        <option>Chaine 6 - Daily Elec</option>
+                        <option>Convoyeurs Casiers C1</option>
+                        <option>WTP - UF_HEB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ligne</label>
+                    <select class="form-select">
+                        <option>Toutes</option>
+                        <option>Chaine 4</option>
+                        <option>Chaine 6</option>
+                        <option>New PET line</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Intervenant</label>
+                    <select class="form-select">
+                        <option>Tous</option>
+                        <option>Jean DUPONT</option>
+                        <option>Marie MARTIN</option>
+                        <option>Pierre DURAND</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Statut</label>
+                    <select class="form-select">
+                        <option>Tous</option>
+                        <option>Complétées</option>
+                        <option>En attente</option>
+                        <option>En retard</option>
+                        <option>Non conformes</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="btn btn-secondary">Réinitialiser</button>
+                <button class="btn btn-primary">📊 Générer le rapport</button>
+            </div>
+        </div>
+
+        <!-- Historique des rapports générés -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📋 Historique des Rapports</h2>
+                <button class="btn btn-primary">🔄 Actualiser</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom du rapport</th>
+                            <th>Type</th>
+                            <th>Période</th>
+                            <th>Date de génération</th>
+                            <th>Généré par</th>
+                            <th>Format</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Rapport hebdomadaire - Semaine 2</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Hebdomadaire</div>
+                            </td>
+                            <td><span class="badge badge-info">Hebdomadaire</span></td>
+                            <td>08/01/2025 - 14/01/2025</td>
+                            <td>
+                                <div>14/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">16:30</div>
+                            </td>
+                            <td>Jean DUPONT</td>
+                            <td>
+                                <span class="badge badge-info">PDF</span>
+                                <span class="badge badge-info" style="margin-left: 0.25rem;">Excel</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📥 PDF</button>
+                                    <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊 Excel</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Monthly Performance Tracker - Janvier 2025</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Mensuel</div>
+                            </td>
+                            <td><span class="badge badge-info">Mensuel</span></td>
+                            <td>01/01/2025 - 31/01/2025</td>
+                            <td>
+                                <div>31/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">17:00</div>
+                            </td>
+                            <td>Marie MARTIN</td>
+                            <td>
+                                <span class="badge badge-info">PDF</span>
+                                <span class="badge badge-info" style="margin-left: 0.25rem;">Excel</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📥 PDF</button>
+                                    <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊 Excel</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Rapport personnalisé - Inspections Chaine 6</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Personnalisé</div>
+                            </td>
+                            <td><span class="badge badge-info">Personnalisé</span></td>
+                            <td>01/01/2025 - 15/01/2025</td>
+                            <td>
+                                <div>15/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">10:15</div>
+                            </td>
+                            <td>Pierre DURAND</td>
+                            <td>
+                                <span class="badge badge-info">PDF</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📥 PDF</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Disponibilité équipements - Décembre 2024</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Mensuel</div>
+                            </td>
+                            <td><span class="badge badge-info">Mensuel</span></td>
+                            <td>01/12/2024 - 31/12/2024</td>
+                            <td>
+                                <div>31/12/2024</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">18:00</div>
+                            </td>
+                            <td>Marie MARTIN</td>
+                            <td>
+                                <span class="badge badge-info">PDF</span>
+                                <span class="badge badge-info" style="margin-left: 0.25rem;">Excel</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📥 PDF</button>
+                                    <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊 Excel</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Exemple de rapport généré -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 Aperçu du Rapport</h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-primary">📥 Télécharger PDF</button>
+                    <button class="btn btn-success">📊 Exporter Excel</button>
+                    <button class="btn btn-secondary">📧 Envoyer par email</button>
+                </div>
+            </div>
+            <div style="background: white; padding: 2rem; border-radius: 0.5rem; border: 2px solid var(--border-color);">
+                <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid var(--border-color);">
+                    <h1 style="color: var(--primary-color); margin-bottom: 0.5rem;">RAPPORT HEBDOMADAIRE</h1>
+                    <p style="color: var(--text-secondary);">Semaine du 08/01/2025 au 14/01/2025</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="margin-bottom: 1rem; color: var(--primary-color);">Résumé Exécutif</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--success-color);">94.2%</div>
+                            <div class="stat-label">Taux de réalisation</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--success-color);">128</div>
+                            <div class="stat-label">Inspections réalisées</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--warning-color);">8</div>
+                            <div class="stat-label">En attente</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--danger-color);">5</div>
+                            <div class="stat-label">Non-conformités</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="margin-bottom: 1rem; color: var(--primary-color);">KPIs de Performance</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Indicateur</th>
+                                    <th>Target</th>
+                                    <th>Actual</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Utility Equipment Availability</td>
+                                    <td>> 90%</td>
+                                    <td>96.8%</td>
+                                    <td><span class="badge badge-success">✅ Atteint</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Preventive Maintenance Compliance</td>
+                                    <td>> 90%</td>
+                                    <td>100%</td>
+                                    <td><span class="badge badge-success">✅ Atteint</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Diesel Generator Specific Consumption</td>
+                                    <td>≤ 0.25</td>
+                                    <td>0.24</td>
+                                    <td><span class="badge badge-success">✅ Atteint</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                    <p>Rapport généré le 14/01/2025 à 16:30 par Jean DUPONT</p>
+                    <p>Système de Digitalisation Maintenance UCB v1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+</body>
+</html>
+

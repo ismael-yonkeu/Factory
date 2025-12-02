@@ -1,0 +1,19 @@
+/* Header UCB avec logo pour toutes les pages */
+.ucb-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ucb-logo {
+    background: var(--ucb-black);
+    color: var(--ucb-white);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    border: 2px solid var(--ucb-white);
+    font-family: 'Arial Black', Arial, sans-serif;
+}
+

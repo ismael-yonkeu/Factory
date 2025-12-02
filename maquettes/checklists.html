@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklists - Système de Digitalisation Maintenance UCB</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo_ucb.png" alt="Logo UCB" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Navigation principale</div>
+            <a href="dashboard.html" class="sidebar-nav-item" data-tooltip="Dashboard">
+                <span class="sidebar-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="checklists.html" class="sidebar-nav-item active" data-tooltip="Checklists">
+                <span class="sidebar-nav-icon">✅</span>
+                <span>Checklists</span>
+            </a>
+            <a href="equipements.html" class="sidebar-nav-item" data-tooltip="Équipements">
+                <span class="sidebar-nav-icon">⚙️</span>
+                <span>Équipements</span>
+            </a>
+            <a href="kpi.html" class="sidebar-nav-item" data-tooltip="KPIs & Ratios">
+                <span class="sidebar-nav-icon">📈</span>
+                <span>KPIs & Ratios</span>
+            </a>
+            <a href="rapports.html" class="sidebar-nav-item" data-tooltip="Rapports">
+                <span class="sidebar-nav-icon">📄</span>
+                <span>Rapports</span>
+            </a>
+            <a href="wtp.html" class="sidebar-nav-item" data-tooltip="WTP">
+                <span class="sidebar-nav-icon">💧</span>
+                <span>WTP</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title">Autres</div>
+            <a href="index.html" class="sidebar-nav-item" data-tooltip="Accueil">
+                <span class="sidebar-nav-icon">🏠</span>
+                <span>Accueil</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+    <div class="page-container">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>✅ Checklists</h1>
+            </div>
+            <div class="page-header-right">
+                <button class="header-icon-btn notification" title="Notifications">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu" title="Menu utilisateur">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Technicien Maintenance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations de la checklist -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Line 6 - Daily Elec</h2>
+                    <p class="card-subtitle">Chaine 6 - New PET line | Fréquence: JOURNALIERE | Date: 15 janvier 2025</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary">📥 Exporter PDF</button>
+                    <button class="btn btn-success">✓ Valider</button>
+                </div>
+            </div>
+
+            <!-- Informations intervenant -->
+            <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Nom et Visa Intervenant</label>
+                        <input type="text" class="form-input" value="Jean DUPONT" placeholder="Nom de l'intervenant">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date et Heure</label>
+                        <input type="datetime-local" class="form-input" value="2025-01-15T08:30">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des tâches -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">N°</th>
+                            <th style="width: 50%;">DESCRIPTION DES TACHES</th>
+                            <th style="width: 10%;">Durée</th>
+                            <th style="width: 10%;">OUI</th>
+                            <th style="width: 10%;">NON</th>
+                            <th style="width: 15%;">REMARQUES (MATERIEL + PIECES)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>Effectuez le Test de lampes de signalisation</td>
+                            <td>10 min</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox" checked>
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td>
+                                <input type="text" class="form-input" placeholder="Remarques..." style="font-size: 0.9rem; padding: 0.5rem;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>Contrôler la fonction des dispositifs de sécurité</td>
+                            <td>15 min</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox" checked>
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td>
+                                <input type="text" class="form-input" placeholder="Remarques..." style="font-size: 0.9rem; padding: 0.5rem;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>Nettoyer les barrières photoélectriques</td>
+                            <td>5 min</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td>
+                                <input type="text" class="form-input" placeholder="Remarques..." style="font-size: 0.9rem; padding: 0.5rem;">
+                            </td>
+                        </tr>
+                        <tr style="background: #fee2e2;">
+                            <td><strong>4</strong></td>
+                            <td>Vérifier l'absence de dommages sur les câbles</td>
+                            <td>20 min</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox" checked>
+                            </td>
+                            <td>
+                                <input type="text" class="form-input" value="Câble endommagé sur section B3" style="font-size: 0.9rem; padding: 0.5rem; border-color: var(--danger-color);">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>5</strong></td>
+                            <td>Contrôler le bon fonctionnement des contacteurs</td>
+                            <td>15 min</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="form-checkbox">
+                            </td>
+                            <td>
+                                <input type="text" class="form-input" placeholder="Remarques..." style="font-size: 0.9rem; padding: 0.5rem;">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Non-conformité détectée -->
+            <div class="alert alert-danger" style="margin-top: 1.5rem;">
+                <span>⚠️</span>
+                <div>
+                    <strong>Non-conformité détectée</strong>
+                    <p>Tâche #4 : Câble endommagé sur section B3 - Un ticket d'anomalie sera créé automatiquement</p>
+                    <button class="btn btn-danger" style="margin-top: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem;">Créer ticket d'anomalie</button>
+                </div>
+            </div>
+
+            <!-- Remarques générales -->
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label class="form-label">Remarques générales</label>
+                <textarea class="form-textarea" rows="3" placeholder="Observations générales..."></textarea>
+            </div>
+
+            <!-- Photos et documents -->
+            <div class="form-group">
+                <label class="form-label">Photos / Documents joints</label>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div style="border: 2px dashed var(--border-color); padding: 2rem; border-radius: 0.5rem; text-align: center; min-width: 150px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Ajouter une photo</div>
+                    </div>
+                    <div style="border: 2px solid var(--primary-color); padding: 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; background: var(--bg-color);">
+                        <span>📄</span>
+                        <div>
+                            <div style="font-weight: 500;">photo_dommage_cable.jpg</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">2.3 MB</div>
+                        </div>
+                        <button style="background: none; border: none; cursor: pointer; color: var(--danger-color); font-size: 1.2rem;">×</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Durée réelle -->
+            <div class="grid grid-2" style="margin-top: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Durée estimée</label>
+                    <input type="text" class="form-input" value="65 min" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Durée réelle</label>
+                    <input type="text" class="form-input" placeholder="Ex: 75 min">
+                </div>
+            </div>
+
+            <!-- Validation responsable -->
+            <div style="background: var(--bg-color); padding: 1.5rem; border-radius: 0.5rem; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Validation Responsable</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Nom et Visa Responsable</label>
+                        <input type="text" class="form-input" placeholder="Nom du responsable">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date et Heure de validation</label>
+                        <input type="datetime-local" class="form-input">
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <label class="form-label">Signature électronique</label>
+                    <div style="border: 2px dashed var(--border-color); padding: 3rem; border-radius: 0.5rem; text-align: center; cursor: pointer; background: white;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">✍️</div>
+                        <div style="color: var(--text-secondary);">Cliquez pour signer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                <button class="btn btn-secondary">💾 Enregistrer comme brouillon</button>
+                <button class="btn btn-primary">📤 Soumettre pour validation</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+</body>
+</html>
+

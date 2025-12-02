@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Système de Digitalisation Maintenance UCB</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Vérifier que Chart.js est chargé
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js not loaded!');
+        } else {
+            console.log('Chart.js loaded successfully');
+        }
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo_ucb.png" alt="Logo UCB" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Navigation</div>
+            <a href="dashboard.html" class="sidebar-nav-item active" data-tooltip="Dashboard">
+                <span class="sidebar-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="checklists.html" class="sidebar-nav-item" data-tooltip="Checklists">
+                <span class="sidebar-nav-icon">✅</span>
+                <span>Checklists</span>
+            </a>
+            <a href="equipements.html" class="sidebar-nav-item" data-tooltip="Équipements">
+                <span class="sidebar-nav-icon">⚙️</span>
+                <span>Équipements</span>
+            </a>
+            <a href="kpi.html" class="sidebar-nav-item" data-tooltip="KPIs & Ratios">
+                <span class="sidebar-nav-icon">📈</span>
+                <span>KPIs & Ratios</span>
+            </a>
+            <a href="rapports.html" class="sidebar-nav-item" data-tooltip="Rapports">
+                <span class="sidebar-nav-icon">📄</span>
+                <span>Rapports</span>
+            </a>
+            <a href="wtp.html" class="sidebar-nav-item" data-tooltip="WTP">
+                <span class="sidebar-nav-icon">💧</span>
+                <span>WTP</span>
+            </a>
+        </nav>
+        
+        <!-- Sidebar Portlets -->
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Rappels</span>
+            </div>
+            <div class="sidebar-portlet-body">
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--danger-color); padding-left: 0.75rem;">
+                    <span>3 Inspections en retard</span>
+                    <span class="sidebar-portlet-item-count">3</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--warning-color); padding-left: 0.75rem;">
+                    <span>8 Checklists en attente</span>
+                    <span class="sidebar-portlet-item-count">8</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--success-color); padding-left: 0.75rem;">
+                    <span>0 Non-conformités critiques</span>
+                    <span class="sidebar-portlet-item-count">0</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--success-color); padding-left: 0.75rem;">
+                    <span>0 Inspections en attente</span>
+                    <span class="sidebar-portlet-item-count">0</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item" style="border-left: 3px solid var(--success-color); padding-left: 0.75rem;">
+                    <span>0 Rapports à approuver</span>
+                    <span class="sidebar-portlet-item-count">0</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar Trend Chart -->
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Maintenance Trend</span>
+                <select style="font-size: var(--font-size-xs); padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border-radius: 4px;" onchange="updateSidebarChart(this.value)">
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </div>
+            <div class="sidebar-portlet-body" style="position: relative; height: 200px;">
+                <canvas id="sidebarTrendChart"></canvas>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>📊 Dashboard</h1>
+            </div>
+            <div class="page-header-right">
+                <button class="header-icon-btn notification" title="Notifications">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu" title="Menu utilisateur">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Technicien Maintenance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-container" style="display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start;">
+        <!-- Colonne centrale -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Tiles Portlet -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">Quick Access</span>
+            </div>
+            <div class="portlet-body">
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card" style="background: #5BC0DE; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Rapports</div>
+                    </div>
+                    <div class="stat-card" style="background: #28A745; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">➕</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Créer Checklist</div>
+                    </div>
+                    <div class="stat-card" style="background: #8B4513; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">Maintenance</div>
+                    </div>
+                    <div class="stat-card" style="background: #17A2B8; border: none; color: var(--ucb-white); cursor: pointer; transition: all 0.2s ease;">
+                        <div class="stat-value" style="color: var(--ucb-white); font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+                        <div class="stat-label" style="color: var(--ucb-white); font-weight: var(--font-weight-medium);">KPIs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Performance Indicators Portlet -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">Key Performance Indicators</span>
+            </div>
+            <div class="portlet-body">
+                <!-- Summary Cards avec tendances -->
+                <div class="grid grid-4" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: var(--font-weight-semibold);">Taux de réalisation</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--text-primary); margin-bottom: 0.25rem;">94.2%</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>2.1%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: var(--font-weight-semibold);">Inspections réalisées</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--success-color); margin-bottom: 0.25rem;">128</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>5.4%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: var(--font-weight-semibold);">En attente</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--warning-color); margin-bottom: 0.25rem;">8</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--danger-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↓</span>
+                            <span>5.4%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border: 1px solid var(--border-color); padding: 1rem; text-align: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: var(--font-weight-semibold);">Non-conformités</div>
+                        <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--danger-color); margin-bottom: 0.25rem;">5</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--success-color); display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                            <span>↑</span>
+                            <span>1.2%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Indicator</th>
+                                <th>Period</th>
+                                <th>Current</th>
+                                <th>Previous</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Taux de réalisation</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>94.2%</td>
+                                <td>92.1%</td>
+                                <td style="color: var(--success-color);">↑ 2.1%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Inspections réalisées</strong></td>
+                                <td>This Week vs. Last Week</td>
+                                <td>128</td>
+                                <td>121</td>
+                                <td style="color: var(--success-color);">↑ 5.4%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>En attente</strong></td>
+                                <td>Today vs. Yesterday</td>
+                                <td>8</td>
+                                <td>9</td>
+                                <td style="color: var(--danger-color);">↓ 11.1%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Non-conformités</strong></td>
+                                <td>This Week vs. Last Week</td>
+                                <td>5</td>
+                                <td>4</td>
+                                <td style="color: var(--success-color);">↑ 25.0%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Utility Equipment Availability</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>96.8%</td>
+                                <td>94.7%</td>
+                                <td style="color: var(--success-color);">↑ 2.1%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Preventive Maintenance Compliance</strong></td>
+                                <td>This Month vs. Last Month</td>
+                                <td>100%</td>
+                                <td>95.0%</td>
+                                <td style="color: var(--success-color);">↑ 5.0%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        </div>
+        
+        <!-- Colonne droite -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Inspections By Period Trend -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Inspections By Period Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('revenueChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="revenueChart" data-type="line" title="Line Chart" onclick="changeChartType('revenueChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="revenueChart" data-type="bar" title="Bar Chart" onclick="changeChartType('revenueChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="revenueChart" data-type="area" title="Area Chart" onclick="changeChartType('revenueChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Monthly Total Open Inspections Trend -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📈 Monthly Total Open Inspections Trend</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select class="form-select" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);" onchange="updatePeriod('opportunitiesChart', this.value)">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="quarterly">Quarterly</option>
+                    </select>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="chart-type-btn" data-chart="opportunitiesChart" data-type="line" title="Line Chart" onclick="changeChartType('opportunitiesChart', 'line')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--primary-color); color: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">━</button>
+                        <button class="chart-type-btn" data-chart="opportunitiesChart" data-type="bar" title="Bar Chart" onclick="changeChartType('opportunitiesChart', 'bar')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▮</button>
+                        <button class="chart-type-btn" data-chart="opportunitiesChart" data-type="area" title="Area Chart" onclick="changeChartType('opportunitiesChart', 'area')" style="padding: 0.375rem 0.5rem; border: 1px solid var(--border-color); background: var(--ucb-white); cursor: pointer; font-size: var(--font-size-xs);">▱</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body" style="position: relative; height: 300px;">
+                <canvas id="opportunitiesChart"></canvas>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+        // Configuration Chart.js - Style NetSuite
+        Chart.defaults.font.family = "'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = '#6C757D';
+        Chart.defaults.borderColor = '#DEE2E6';
+        Chart.defaults.backgroundColor = '#5BC0DE';
+
+        // Données pour les graphiques
+        const monthlyLabels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        // Inspections By Period (similaire à Revenue)
+        const revenueData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [120, 125, 130, 128, 132, 128]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [30, 32, 31, 33, 32, 128]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [115, 120, 125, 128, 130, 128]
+            }
+        };
+
+        // Monthly Total Open Inspections (similaire à Opportunities)
+        const opportunitiesData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [15, 16, 17, 16, 18, 17]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [17, 17, 17, 17, 17, 17]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+                data: [14, 15, 16, 16, 17, 17]
+            }
+        };
+
+        // Maintenance Trend pour sidebar
+        const sidebarTrendData = {
+            monthly: {
+                labels: monthlyLabels,
+                data: [85, 88, 90, 92, 94, 96]
+            },
+            weekly: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                data: [94, 95, 96, 96, 96, 96]
+            }
+        };
+
+        // Fonction pour calculer la moyenne mobile
+        function calculateMovingAverage(data, window = 3) {
+            const movingAvg = [];
+            for (let i = 0; i < data.length; i++) {
+                const start = Math.max(0, i - window + 1);
+                const subset = data.slice(start, i + 1);
+                const avg = subset.reduce((a, b) => a + b, 0) / subset.length;
+                movingAvg.push(avg);
+            }
+            return movingAvg;
+        }
+
+        // Fonction pour créer un graphique avec Moving Average
+        function createChart(canvasId, data, label, unit = '', color = '#5BC0DE', chartType = 'bar') {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas not found:', canvasId);
+                return null;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Could not get 2d context for:', canvasId);
+                return null;
+            }
+            
+            const chartData = data.monthly;
+            const movingAvg = calculateMovingAverage(chartData.data, 3);
+            
+            try {
+                const chart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: label,
+                            data: chartData.data,
+                            backgroundColor: chartType === 'line' ? 'transparent' : color,
+                            borderColor: color,
+                            borderWidth: 2,
+                            fill: chartType === 'area',
+                            tension: chartType === 'line' || chartType === 'area' ? 0.4 : 0
+                        },
+                        {
+                            label: 'Moving Average',
+                            data: movingAvg,
+                            borderColor: '#6C757D',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                },
+                                color: '#6C757D'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#212529',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF',
+                            borderColor: '#DEE2E6',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const datasetLabel = context.dataset.label || label;
+                                    let value = context.parsed.y;
+                                    if (unit) {
+                                        value = value + unit;
+                                    }
+                                    return datasetLabel + ': ' + value;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + unit;
+                                }
+                            },
+                            grid: {
+                                color: '#DEE2E6',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6C757D',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+                return chart;
+            } catch (error) {
+                console.error('Error creating chart:', canvasId, error);
+                return null;
+            }
+        }
+
+        // Fonction pour changer le type de graphique
+        function changeChartType(canvasId, chartType) {
+            const chart = window.charts[canvasId];
+            if (!chart) return;
+
+            chart.config.type = chartType;
+            chart.data.datasets[0].backgroundColor = chartType === 'line' ? 'transparent' : chart.data.datasets[0].borderColor;
+            chart.data.datasets[0].fill = chartType === 'area';
+            chart.data.datasets[0].tension = chartType === 'line' || chartType === 'area' ? 0.4 : 0;
+
+            const buttons = document.querySelectorAll(`[data-chart="${canvasId}"]`);
+            buttons.forEach(btn => {
+                if (btn.dataset.type === chartType) {
+                    btn.style.background = 'var(--primary-color)';
+                    btn.style.color = 'var(--ucb-white)';
+                } else {
+                    btn.style.background = 'var(--ucb-white)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+
+            chart.update();
+        }
+
+        // Fonction pour mettre à jour la période
+        function updatePeriod(canvasId, period) {
+            const chart = window.charts[canvasId];
+            if (!chart) return;
+
+            let data;
+            let color = '#5BC0DE';
+
+            switch(canvasId) {
+                case 'revenueChart':
+                    data = revenueData[period];
+                    color = '#28A745';
+                    break;
+                case 'opportunitiesChart':
+                    data = opportunitiesData[period];
+                    color = '#17A2B8';
+                    break;
+            }
+
+            const movingAvg = calculateMovingAverage(data.data, 3);
+            
+            chart.data.labels = data.labels;
+            chart.data.datasets[0].data = data.data;
+            chart.data.datasets[0].borderColor = color;
+            chart.data.datasets[0].backgroundColor = chart.config.type === 'line' ? 'transparent' : color;
+            chart.data.datasets[1].data = movingAvg;
+            chart.update();
+        }
+
+        // Fonction pour mettre à jour le graphique de la sidebar
+        function updateSidebarChart(period) {
+            const chart = window.charts.sidebarTrendChart;
+            if (!chart) return;
+
+            const data = sidebarTrendData[period];
+            const movingAvg = calculateMovingAverage(data.data, 3);
+            
+            chart.data.labels = data.labels;
+            chart.data.datasets[0].data = data.data;
+            chart.data.datasets[1].data = movingAvg;
+            chart.update();
+        }
+
+        // Initialiser tous les graphiques au chargement
+        window.charts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing charts...');
+            console.log('Chart.js available:', typeof Chart !== 'undefined');
+            
+            // Attendre un peu pour s'assurer que tout est chargé
+            setTimeout(function() {
+                // Sidebar Trend Chart
+                const sidebarCanvas = document.getElementById('sidebarTrendChart');
+                if (sidebarCanvas) {
+                    window.charts.sidebarTrendChart = createChart('sidebarTrendChart', sidebarTrendData, 'Maintenance Compliance', '%', '#28A745', 'area');
+                    console.log('Sidebar chart created:', window.charts.sidebarTrendChart);
+                } else {
+                    console.error('Sidebar canvas not found');
+                }
+                
+                // Revenue Chart (Inspections By Period)
+                const revenueCanvas = document.getElementById('revenueChart');
+                if (revenueCanvas) {
+                    window.charts.revenueChart = createChart('revenueChart', revenueData, 'Inspections', '', '#28A745', 'bar');
+                    console.log('Revenue chart created:', window.charts.revenueChart);
+                } else {
+                    console.error('Revenue canvas not found');
+                }
+                
+                // Opportunities Chart (Monthly Total Open Inspections)
+                const opportunitiesCanvas = document.getElementById('opportunitiesChart');
+                if (opportunitiesCanvas) {
+                    window.charts.opportunitiesChart = createChart('opportunitiesChart', opportunitiesData, 'Open Inspections', '', '#17A2B8', 'line');
+                    console.log('Opportunities chart created:', window.charts.opportunitiesChart);
+                } else {
+                    console.error('Opportunities canvas not found');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+

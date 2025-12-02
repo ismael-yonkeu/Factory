@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Équipements - Système de Digitalisation Maintenance UCB</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo_ucb.png" alt="Logo UCB" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Navigation</div>
+            <a href="dashboard.html" class="sidebar-nav-item" data-tooltip="Dashboard">
+                <span class="sidebar-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="checklists.html" class="sidebar-nav-item" data-tooltip="Checklists">
+                <span class="sidebar-nav-icon">✅</span>
+                <span>Checklists</span>
+            </a>
+            <a href="equipements.html" class="sidebar-nav-item active" data-tooltip="Équipements">
+                <span class="sidebar-nav-icon">⚙️</span>
+                <span>Équipements</span>
+            </a>
+            <a href="kpi.html" class="sidebar-nav-item" data-tooltip="KPIs & Ratios">
+                <span class="sidebar-nav-icon">📈</span>
+                <span>KPIs & Ratios</span>
+            </a>
+            <a href="rapports.html" class="sidebar-nav-item" data-tooltip="Rapports">
+                <span class="sidebar-nav-icon">📄</span>
+                <span>Rapports</span>
+            </a>
+            <a href="wtp.html" class="sidebar-nav-item" data-tooltip="WTP">
+                <span class="sidebar-nav-icon">💧</span>
+                <span>WTP</span>
+            </a>
+        </nav>
+        
+        <!-- Sidebar Portlets -->
+        <div class="sidebar-portlet">
+            <div class="sidebar-portlet-header">
+                <span>Rappels</span>
+            </div>
+            <div class="sidebar-portlet-body">
+                <a href="#" class="sidebar-portlet-item">
+                    <span>3 Inspections en retard</span>
+                    <span class="sidebar-portlet-item-count">3</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item">
+                    <span>2 Non-conformités critiques</span>
+                    <span class="sidebar-portlet-item-count">2</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item">
+                    <span>8 Checklists en attente</span>
+                    <span class="sidebar-portlet-item-count">8</span>
+                </a>
+                <a href="#" class="sidebar-portlet-item">
+                    <span>5 Inspections aujourd'hui</span>
+                    <span class="sidebar-portlet-item-count">5</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+        <div class="page-container">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>⚙️ Équipements</h1>
+            </div>
+            <div class="page-header-right">
+                <button class="header-icon-btn notification" title="Notifications">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu" title="Menu utilisateur">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Technicien Maintenance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal Ajouter un équipement -->
+        <div id="addEquipmentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>➕ Ajouter un équipement</h2>
+                    <button class="modal-close" onclick="closeAddEquipmentModal()">✕</button>
+                </div>
+                <form id="addEquipmentForm" class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label required">Identifiant unique</label>
+                            <input type="text" class="form-input" name="equipmentId" placeholder="Ex: EQ-001" required>
+                            <small class="form-help">Identifiant unique de l'équipement</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Nom de l'équipement</label>
+                            <input type="text" class="form-input" name="equipmentName" placeholder="Ex: Compresseur Sabroe 1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Type</label>
+                            <select class="form-select" name="equipmentType" required>
+                                <option value="">Sélectionner un type</option>
+                                <option value="electrique">Électrique</option>
+                                <option value="mecanique">Mécanique</option>
+                                <option value="utilitaire">Utilitaire</option>
+                                <option value="wtp">WTP (Water Treatment Plant)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Ligne de production</label>
+                            <select class="form-select" name="productionLine" required>
+                                <option value="">Sélectionner une ligne</option>
+                                <option value="chaine4">Chaine 4</option>
+                                <option value="chaine6">Chaine 6</option>
+                                <option value="newpet">New PET line</option>
+                                <option value="line4">Line 4</option>
+                                <option value="line5">Line 5</option>
+                                <option value="line6">Line 6</option>
+                                <option value="utilities">Utilities</option>
+                                <option value="wtp">WTP</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Statut</label>
+                            <select class="form-select" name="status" required>
+                                <option value="">Sélectionner un statut</option>
+                                <option value="actif">Actif</option>
+                                <option value="maintenance">En maintenance</option>
+                                <option value="inactif">Inactif</option>
+                                <option value="hors-service">Hors service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Localisation</label>
+                            <input type="text" class="form-input" name="location" placeholder="Ex: Zone A, Bâtiment 2">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-input" name="description" rows="3" placeholder="Description détaillée de l'équipement..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Numéro de série</label>
+                            <input type="text" class="form-input" name="serialNumber" placeholder="Ex: SN-2024-001">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date d'installation</label>
+                            <input type="date" class="form-input" name="installationDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fournisseur</label>
+                            <input type="text" class="form-input" name="supplier" placeholder="Nom du fournisseur">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Modèle</label>
+                            <input type="text" class="form-input" name="model" placeholder="Modèle de l'équipement">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeAddEquipmentModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-overlay" id="modalOverlay" onclick="closeAddEquipmentModal()" style="display: none;"></div>
+
+        <!-- Filtres et recherche -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">🔍 Filtres et recherche</span>
+            </div>
+            <div class="portlet-body">
+                <div class="grid grid-4">
+                    <div class="form-group">
+                        <label class="form-label">Rechercher</label>
+                        <input type="text" class="form-input" placeholder="Nom de l'équipement...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select class="form-select">
+                            <option>Tous</option>
+                            <option>Électrique</option>
+                            <option>Mécanique</option>
+                            <option>Utilitaire</option>
+                            <option>WTP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ligne</label>
+                        <select class="form-select">
+                            <option>Toutes</option>
+                            <option>Chaine 4</option>
+                            <option>Chaine 6</option>
+                            <option>New PET line</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select class="form-select">
+                            <option>Tous</option>
+                            <option>Actif</option>
+                            <option>En maintenance</option>
+                            <option>Inactif</option>
+                            <option>Hors service</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">📊 Statistiques</span>
+            </div>
+            <div class="portlet-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" style="color: var(--success-color);">42</div>
+                        <div class="stat-label">Équipements actifs</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning-color);">
+                        <div class="stat-value" style="color: var(--warning-color);">3</div>
+                        <div class="stat-label">En maintenance</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--danger-color);">
+                        <div class="stat-value" style="color: var(--danger-color);">2</div>
+                        <div class="stat-label">Hors service</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--text-secondary);">
+                        <div class="stat-value" style="color: var(--text-secondary);">47</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des équipements -->
+        <div class="portlet">
+            <div class="portlet-header">
+                <span class="portlet-title">⚙️ Liste des Équipements</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-primary" onclick="openAddEquipmentModal()" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">➕ Ajouter</button>
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">📥 Excel</button>
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">📄 PDF</button>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Équipement</th>
+                            <th>Type</th>
+                            <th>Ligne</th>
+                            <th>Localisation</th>
+                            <th>Statut</th>
+                            <th>Dernière inspection</th>
+                            <th>Prochaine inspection</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Chaine 6 - Daily Elec</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-001</div>
+                            </td>
+                            <td><span class="badge badge-info">Électrique</span></td>
+                            <td>Chaine 6</td>
+                            <td>New PET line</td>
+                            <td><span class="badge badge-success">✅ Actif</span></td>
+                            <td>
+                                <div>15/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">08:30</div>
+                            </td>
+                            <td>
+                                <div><strong>16/01/2025</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">08:00</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="checklists.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📋</a>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Convoyeurs Casiers C1</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-002</div>
+                            </td>
+                            <td><span class="badge badge-info">Mécanique</span></td>
+                            <td>Chaine 4</td>
+                            <td>Zone production</td>
+                            <td><span class="badge badge-success">✅ Actif</span></td>
+                            <td>
+                                <div>12/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">14:00</div>
+                            </td>
+                            <td>
+                                <div><strong>19/01/2025</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">14:00</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="checklists.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📋</a>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>WTP - UF_HEB</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-003</div>
+                            </td>
+                            <td><span class="badge badge-info">WTP</span></td>
+                            <td>WTP</td>
+                            <td>Water Treatment Plant</td>
+                            <td><span class="badge badge-warning">⚠️ En maintenance</span></td>
+                            <td>
+                                <div>10/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">06:00</div>
+                            </td>
+                            <td>
+                                <div><strong style="color: var(--danger-color);">15/01/2025</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--danger-color);">⚠️ En retard</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="checklists.html" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📋</a>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Sabroe Compressor 1</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-004</div>
+                            </td>
+                            <td><span class="badge badge-info">Utilitaire</span></td>
+                            <td>Utility</td>
+                            <td>Utility Building</td>
+                            <td><span class="badge badge-success">✅ Actif</span></td>
+                            <td>
+                                <div>14/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">07:00</div>
+                            </td>
+                            <td>
+                                <div><strong>16/01/2025</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">07:00</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="checklists.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📋</a>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Boiler Plant</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-005</div>
+                            </td>
+                            <td><span class="badge badge-info">Utilitaire</span></td>
+                            <td>Utility</td>
+                            <td>Boiler Room</td>
+                            <td><span class="badge badge-danger">❌ Hors service</span></td>
+                            <td>
+                                <div>08/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">10:00</div>
+                            </td>
+                            <td>
+                                <div><strong>-</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--danger-color);">Hors service</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; opacity: 0.5;" disabled>📋</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>CO2 Plant</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: EQ-006</div>
+                            </td>
+                            <td><span class="badge badge-info">Utilitaire</span></td>
+                            <td>Utility</td>
+                            <td>CO2 Recovery</td>
+                            <td><span class="badge badge-warning">⚠️ En maintenance</span></td>
+                            <td>
+                                <div>11/01/2025</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">09:00</div>
+                            </td>
+                            <td>
+                                <div><strong>20/01/2025</strong></div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">09:00</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; opacity: 0.5;" disabled>📋</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">⚙️</button>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📊</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <div style="color: var(--text-secondary); font-size: var(--font-size-sm);">Affichage de 1 à 6 sur 47 équipements</div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" disabled style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">← Précédent</button>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">1</button>
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">2</button>
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">3</button>
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">...</button>
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">8</button>
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">Suivant →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+        function openAddEquipmentModal() {
+            document.getElementById('addEquipmentModal').style.display = 'flex';
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddEquipmentModal() {
+            document.getElementById('addEquipmentModal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('addEquipmentForm').reset();
+        }
+
+        // Fermer avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAddEquipmentModal();
+            }
+        });
+
+        // Gestion de la soumission du formulaire
+        document.getElementById('addEquipmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(this);
+            const equipmentData = {};
+            formData.forEach((value, key) => {
+                equipmentData[key] = value;
+            });
+
+            // Ici, vous pouvez ajouter la logique pour envoyer les données au serveur
+            console.log('Données de l\'équipement:', equipmentData);
+            
+            // Afficher un message de succès (à remplacer par une vraie notification)
+            alert('Équipement ajouté avec succès !');
+            
+            // Fermer le modal
+            closeAddEquipmentModal();
+        });
+    </script>
+</body>
+</html>
+

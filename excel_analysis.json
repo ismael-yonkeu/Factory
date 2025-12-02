@@ -1,0 +1,919 @@
+[
+  {
+    "file_name": "Line 6 Check-lists Daily ELEC.xlsx",
+    "file_path": "docs\\Line 6 Check-lists Daily ELEC.xlsx",
+    "number_of_sheets": 12,
+    "sheets": [
+      {
+        "name": "Daily Elec",
+        "max_rows": 30,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "Chaine 6",
+              "New PET line",
+              "",
+              "",
+              "JOURNALIERE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Cvyr Btles",
+        "max_rows": 113,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "PALETTISEUR",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C1",
+        "max_rows": 113,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C1",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C2",
+        "max_rows": 113,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C2",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C3",
+        "max_rows": 38,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C3",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C4",
+        "max_rows": 43,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C4",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C5",
+        "max_rows": 43,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C5",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C6",
+        "max_rows": 43,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C6",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C7",
+        "max_rows": 43,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C7",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CC C8",
+        "max_rows": 43,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "CONVOYEURS CASIERS C8",
+              "CHAINE 4",
+              "",
+              "",
+              "HEBDOMADAIRE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          },
+          {
+            "row": 8,
+            "values": [
+              "",
+              "1",
+              "controler l'arret d'huile et le remplacé au besoin",
+              "10",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 9,
+            "values": [
+              "",
+              "2",
+              "controler la fixation du réducteur sur le convoyeu",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "row": 10,
+            "values": [
+              "",
+              "3",
+              "controler l'usure du pignon et le remplacé au beso",
+              "30",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Line & frequency",
+        "max_rows": 3,
+        "max_columns": 7,
+        "merged_cells_count": 0,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          2
+        ],
+        "sample_data": [
+          {
+            "row": 3,
+            "values": [
+              "",
+              "Date",
+              "2021-03-18 00:00:00",
+              "",
+              "",
+              "",
+              "2021-03-18 00:00:00"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Daily Méca Alain",
+        "max_rows": 33,
+        "max_columns": 7,
+        "merged_cells_count": 8,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          3,
+          6
+        ],
+        "sample_data": [
+          {
+            "row": 4,
+            "values": [
+              "",
+              "",
+              "Méca (labeller, Kisters, handle applicator, et Con",
+              "New PET line",
+              "",
+              "",
+              "JPORNALIERE"
+            ]
+          },
+          {
+            "row": 7,
+            "values": [
+              "",
+              "N°",
+              "DESCRIPTION DES TACHES",
+              "Durée",
+              "OUI",
+              "NON",
+              "REMARQUES (MATERIEL + PIECES)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file_name": "UCB Utility Equipment Checklist.xlsx",
+    "file_path": "docs\\Utility Folder\\UCB Utility Equipment Checklist.xlsx",
+    "number_of_sheets": 9,
+    "sheets": [
+      {
+        "name": "Sabroe Checklist",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Sabroe Checklist (2)",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Condenser Checklist",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Boiler Checklist",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Air compressors Checklist 90",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Air compressors Checklist 75",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "CO2 Checklist",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      },
+      {
+        "name": "Condensate Tank",
+        "max_rows": 40,
+        "max_columns": 15,
+        "merged_cells_count": 62,
+        "has_formulas": false,
+        "formula_count_sample": 0,
+        "header_candidates": [
+          8,
+          16
+        ],
+        "sample_data": [
+          {
+            "row": 9,
+            "values": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "Brewhouse",
+              "MORNING",
+              "",
+              "",
+              "AFTERNOON"
+            ]
+          },
+          {
+            "row": 17,
+            "values": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "Cellar",
+              "MORNING",
+              "",
+              "",
+              "AFTERNOON"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Condenser Checklist CO2",
+        "error": "'charmap' codec can't encode character '\\u2192' in position 77: character maps to <undefined>"
+      }
+    ]
+  }
+]
